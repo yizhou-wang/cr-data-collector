@@ -73,7 +73,7 @@ if __name__ == '__main__':
     # main("D:/RawData/0000/images", 'ost.yaml')
     # load_calib('ost.yaml')
 
-    date = input("Enter date: ")
+    date = input("Enter date (default=today): ")
     if date == '':
         now = datetime.datetime.now()
         date = "%s_%s_%s" % (now.year, now.month, now.day)
