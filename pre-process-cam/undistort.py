@@ -76,6 +76,6 @@ if __name__ == '__main__':
     date = input("Enter date (default=today): ")
     if date == '':
         now = datetime.datetime.now()
-        date = "%s_%s_%s" % (now.year, now.month, now.day)
+        date = "%s_%02d_%02d" % (now.year, now.month, now.day)
 
     undistort_for_date(date)

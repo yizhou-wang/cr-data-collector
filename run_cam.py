@@ -677,7 +677,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     now = datetime.datetime.now()
-    cur_date = "%s_%s_%s" % (now.year, now.month, now.day)
+    cur_date = "%s_%02d_%02d" % (now.year, now.month, now.day)
 
     MAX_TRY = 3
 
