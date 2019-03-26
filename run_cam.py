@@ -41,8 +41,6 @@ import time
 import datetime
 from argparse import ArgumentParser
 
-FIRST_TS = None
-
 
 # Use the following class and global variable to select whether
 # chunk data is displayed from the image or the nodemap.
