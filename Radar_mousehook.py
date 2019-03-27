@@ -16,13 +16,21 @@ m.click(x_dim//2-70, y_dim//2-100, 1)
 t1 = time.time()
 ## save time t1
 
-print('Finished Recording Data? Y/N')
+record_flag = input('Finished recording data? (y/n) ')
+
+if not record_flag is 'y':
+    print("Data recording is not finished! Quit...")
+    quit()
+
 # if yes, continue
 
 time_modif = os.path.getmtime('C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/adc_data_Raw_0.bin')
 print('The creation time of this radar data is ',time_modif,'. Is this correct?')
 # if yes, continue
 ## then packet reorder and zero fill
-os.system('cd C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc')
-os.system('Packet_Reorder_Zerofill.exe adc_data_Raw_0.bin adc_data.bin')
+# os.system('cd C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc')
+os.system('C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/Packet_Reorder_Zerofill.exe \
+           C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/adc_data_Raw_0.bin \
+           C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/adc_data.bin \
+           D:/tmp/radar_pp/log.txt')
 ## is success, then copy file to destimation; otherwise, print error
