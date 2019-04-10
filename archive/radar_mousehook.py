@@ -30,7 +30,7 @@ print('The creation time of this radar data is ',time_modif,'. Is this correct?'
 ## then packet reorder and zero fill
 # os.system('cd C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc')
 os.system('C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/Packet_Reorder_Zerofill.exe \
-           C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/adc_data_Raw_0.bin \
-           C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/adc_data.bin \
-           D:/tmp/radar_pp/log.txt')
+           'C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/adc_data_Raw_0.bin' \
+           'C:/ti/mmwave_studio_01_00_00_00/mmWaveStudio/PostProc/adc_data.bin' \
+           'D:/tmp/radar_pp/log.txt'')
 ## is success, then copy file to destimation; otherwise, print error
