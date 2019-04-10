@@ -48,7 +48,7 @@ def undistort_for_seq(folder_dir, calib_yaml):
         cv2.imwrite(im_out_name, im_undis)
 
 
-def undistort_for_date(date, data_dir='D:\RawData'):
+def undistort_for_date(date, data_dir='D:\\RawData'):
 
     base_dir = os.path.join(data_dir, date)
 
