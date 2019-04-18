@@ -635,6 +635,7 @@ def run_radar():
 
     # click DCA1000RAM
     radar_m.click(x_dim//2-150, y_dim//2-120, 1)
+    time.sleep(0.5)
     ## record the click time and click trigger
     radar_m.click(x_dim//2-70, y_dim//2-100, 1)
 
