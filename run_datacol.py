@@ -716,7 +716,7 @@ def main(base_dir, seq_name, frame_rate, num_img):
     # Release system instance
     system.ReleaseInstance()
 
-    input('Done! Press Enter to copy radar data...')
+    print('Done! Copy radar data...')
 
     # move radar data files to right place
     copy_radar_data(base_dir, seq_name)
