@@ -55,7 +55,7 @@ def undistort_for_date(date, data_dir='D:\\RawData'):
     if not os.path.exists(base_dir):
         raise ValueError("Data not found!")
 
-    calib_yaml = os.path.join(base_dir, 'ost.yaml')
+    calib_yaml = os.path.join(base_dir, 'cam_calib.yaml')
     if not os.path.exists(calib_yaml):
         print("Specific calibration for this date is unavailable, using default value.\n")
         calib_yaml = 'ost.yaml'
