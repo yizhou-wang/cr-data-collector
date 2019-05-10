@@ -1,28 +1,8 @@
-'''
-camera calibration for distorted images with chess board samples
-reads distorted images, calculates the calibration and write undistorted images
-usage:
-    calibrate.py [--debug <output path>] [--square_size] [<image mask>]
-default values:
-    --debug:    ./output/
-    --square_size: 1.0
-    <image mask> defaults to ../data/left*.jpg
-'''
-
-# Python 2/3 compatibility
-from __future__ import print_function
-
 import numpy as np
 import os
-import sys
 import cv2
 import yaml
 
-    
-'''
-Find and return chessboard and corners of the image.
-Not Found chessboard in the image : return None.
-'''
 
 def camera_calibration(base_dir, img_names, pattern_size=(8, 6), square_size=0.022):
     h, w = cv2.imread(os.path.join(base_dir, img_names[0]), cv2.IMREAD_GRAYSCALE).shape[:2]
@@ -35,8 +15,6 @@ def camera_calibration(base_dir, img_names, pattern_size=(8, 6), square_size=0.0
         chessboard = chessboard_from_img(img_name, pattern_size, square_size)
         if chessboard is not None:
             corners, pattern_points = chessboard
-            # print(corners.shape)
-            # print(pattern_points.shape)
             corners_list.append(corners)
             pattern_points_list.append(pattern_points)
 
@@ -46,9 +24,6 @@ def camera_calibration(base_dir, img_names, pattern_size=(8, 6), square_size=0.0
         print("%d valid images detected! Not enough for calibration!" % len(corners_list))
         return None
 
-    # print(len(corners_list))
-    # print(len(pattern_points_list))
-
     # calculate camera parameters
     rms, camera_matrix, dist_coefs, rvecs, tvecs = cv2.calibrateCamera(
         pattern_points_list, corners_list, (w, h), None, None)
@@ -57,6 +32,10 @@ def camera_calibration(base_dir, img_names, pattern_size=(8, 6), square_size=0.0
 
 
 def chessboard_from_img(img_name, pattern_size, square_size): 
+    """
+    Find and return chessboard and corners of the image.
+    Not Found chessboard in the image : return None.
+    """
     img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)
     if img is None:
         print("Failed to load ", img_name)
@@ -65,9 +44,6 @@ def chessboard_from_img(img_name, pattern_size, square_size):
     pattern_points = np.zeros((np.prod(pattern_size), 3), np.float32)
     pattern_points[:, :2] = np.indices(pattern_size).T.reshape(-1, 2)
     pattern_points *= square_size
-    w = img.shape[1] 
-    h = img.shape[0]
-    # assert w == img.shape[1] and h == img.shape[0], ("size: %d x %d ... " % (img.shape[1], img.shape[0]))
 
     found, corners = cv2.findChessboardCorners(img, pattern_size)
     ### return all the inner corners of the chessboard. If it fails to return all the
@@ -110,11 +86,10 @@ def save_cam_calib_yaml(yaml_name, w, h, camera_matrix, dist_coefs, rvecs, tvecs
 
     with open(yaml_name, 'w') as outfile:
         yaml.dump(d, outfile, default_flow_style=None, sort_keys=False)
-  
+
 
 if __name__ == '__main__':
-    # Test of the result. Main program.
-    # D:\RawData\2019_05_02\2019_05_02_calib001\images
+
     base_dir = "D:\\RawData\\2019_05_02\\2019_05_02_calib\\images"
     img_names = sorted(os.listdir(base_dir))
     camera_calibration(base_dir, img_names)
