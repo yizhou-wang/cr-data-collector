@@ -649,15 +649,22 @@ def copy_radar_data(base_dir, seq_name):
     original_files = sorted(os.listdir(os.path.join(radar_root)))
     TIME_FLAG = 0
     n_files = 0
+    size_min = 1000
     for fname in original_files:
         if fname.startswith("adc_data_Raw_") and fname.endswith(".bin"):
             old_path = os.path.join(radar_root, fname)
             time_new = os.path.getmtime(old_path)
-            if time_new > TIME_FLAG:
-                TIME_FLAG = time_new
-                new_path = os.path.join(base_dir, seq_name, 'radar', fname)
-                shutil.copyfile(old_path, new_path)
-                n_files += 1
+            size_old = os.path.getsize(old_path)
+            if size_old > size_min: 
+                if time_new > TIME_FLAG:
+                    TIME_FLAG = time_new
+                    new_path = os.path.join(base_dir, seq_name, 'radar', fname)
+                    shutil.copyfile(old_path, new_path)
+                    n_files += 1
+            else:
+                print("Error!!! The size of data file is less than 1000kB, possiblely there is no radar data!!")
+                print("Please recapture this sequence and overwrite it")
+                break
     print("Copied %d radar data files to right place." % n_files)
     return
 
