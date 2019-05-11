@@ -726,6 +726,7 @@ def main(base_dir, seq_name, frame_rate, num_img):
     print('Done! Copy radar data...')
 
     # move radar data files to right place
+    time.sleep(1)
     copy_radar_data(base_dir, seq_name)
 
     return result
