@@ -3,8 +3,7 @@ import os
 import shutil
 import time
 import datetime
-import glob
-import calibration as calib
+import camera_calibration as calib
 
 
 def calib_for_date(date, data_dir='D:\\RawData'):
