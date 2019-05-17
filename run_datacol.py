@@ -665,6 +665,11 @@ def copy_radar_data(base_dir, seq_name):
                 print("Error!!! The size of data file is less than 1000kB, possiblely there is no radar data!!")
                 print("Please recapture this sequence and overwrite it")
                 break
+
+    time_cur = time.time()
+    if time_cur - time_new > 300:
+        print("WARNING!!! May copied old data, please check")
+        
     print("Copied %d radar data files to right place." % n_files)
     return
 
