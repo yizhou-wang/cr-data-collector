@@ -9,6 +9,16 @@ This is a repository for Camera/Radar data collection tools, including operating
 cd cr-data-collector
 conda create --name datacol --file requirements.txt
 ```
+4. Download Spinnaker Python SDK
+    1) Download Spinnaker Python SDK: https://www.flir.com/products/spinnaker-sdk/
+    2) DOWNLOAD NOW => DOWNLOAD FROM BOX => Windows => Latest Python Spinnaker => 
+    x86: `spinnaker_python-1.23.0.27-cp36-cp36m-win32.zip` / x64: `spinnaker_python-1.23.0.27-cp36-cp36m-win_amd64.zip`
+5. Activate conda env:
+```
+activate datacol
+```
+6. Unzip downloaded Python SDK and follow `README.txt` "1.1 Installation for Windows". 
+
 
 ## Run data collector
 1. Activate conda env:
