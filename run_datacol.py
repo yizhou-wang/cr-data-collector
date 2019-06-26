@@ -741,7 +741,7 @@ if __name__ == '__main__':
 
     parser = ArgumentParser()
     parser.add_argument('-b', '--basedir', dest='base_dir', help='set base directory')
-    parser.add_argument('-s', '--seqnum', dest='sequence_number', help='set sequence series number')
+    parser.add_argument('-s', '--seqnum', dest='sequence_number', help='set sequence series name')
     parser.add_argument('-fr', '--framerate', dest='frame_rate', help='set acquisition framerate')
     parser.add_argument('-n', '--numimg', dest='number_of_images', help='set acquisition image number')
     args = parser.parse_args()
@@ -765,8 +765,8 @@ if __name__ == '__main__':
     try_remain = MAX_TRY
     while args.sequence_number is None or args.sequence_number == '':
         if try_remain == 0:
-            raise ValueError('Do not receive sequence number. Quit.')
-        args.sequence_number = input("Enter sequence number: ")
+            raise ValueError('Do not receive sequence name. Quit.')
+        args.sequence_number = input("Enter sequence name: ")
         try_remain -= 1
     args.sequence_number = cur_date + '_' + args.sequence_number
 
@@ -789,7 +789,7 @@ if __name__ == '__main__':
 
     print('Input configurations:')
     print('\tBase Directory:\t', args.base_dir)
-    print('\tSeries No.:\t', args.sequence_number)
+    print('\tSequence Name:\t', args.sequence_number)
     print('\tFramerate:\t', args.frame_rate)
     print('\tImage Number:\t', args.number_of_images)
     print('')
@@ -802,7 +802,7 @@ if __name__ == '__main__':
     data_dir = os.path.join(args.base_dir, args.sequence_number)
     print(data_dir)
     if os.path.exists(data_dir):
-        overwrite = input("Sequence number already exist! Overwrite? (y/n) ")
+        overwrite = input("Sequence name already exist! Overwrite? (y/n) ")
         if overwrite is not 'y':
             print('Do not overwrite. Quit...')
             quit()
