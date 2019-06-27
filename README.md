@@ -2,7 +2,7 @@
 This is a repository for Camera/Radar data collection tools, including operating the sensors, image/radar data preprocessing, sensor calibration.
 
 ## Installation
-1. Install Anaconda.
+1. Install Anaconda and MATLAB.
 2. Clone this repository to your local laptop.
 3. Setup Python environment in Anaconda Prompt:
 ```
@@ -18,6 +18,7 @@ conda create --name datacol --file requirements.txt
 activate datacol
 ```
 6. Unzip downloaded Python SDK and follow `README.txt` "1.1 Installation for Windows". 
+7. Install MATLAB Engine API for Python by following the instruction: https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html
 
 
 ## Run data collector
