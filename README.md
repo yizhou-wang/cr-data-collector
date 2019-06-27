@@ -33,6 +33,7 @@ python run_datacol.py
 
     There are several configurations need to be set as follows. If you input nothing, it will use the default values.
     - Base directory: the place to store collected data. Default to be `D:\RawData`.
+    - Sequence number: the number of sequences to be collected. Default to be 1. (if == 1, sequence name is needed; else, use `onrd_xxx`)
     - Sequence name: the name of the current sequence. Does not have default value.
     - Frame rate: the frame rate of the camera. Default to be 30 FPS.
     - Number of images: the number of images need to be collected in this sequence. Default to be 30. 
@@ -41,17 +42,16 @@ python run_datacol.py
     ```
     (datacol) D:\data-collection-tools\cr-data-collector>python run_datacol.py
     Enter base directory (default='D:\RawData'):
-    Enter sequence number: 000
+    Enter sequence number (default=1): 3
     Enter frame rate (default=30):
     Enter number of images (default=30):
     Input configurations:
-            Base Directory:  D:\RawData\2019_06_26
-            Series No.:      2019_06_26_000
-            Framerate:       30
-            Image Number:    30
+            Base Directory:          D:\RawData\2019_06_26
+            Sequence Number:         3
+            Sequence Name:           ['2019_06_26_onrd012', '2019_06_26_onrd013', '2019_06_26_onrd014']
+            Framerate:               30
+            Image Number:            30
     
-    Are the above configurations correct? (y/n) y
-    D:\RawData\2019_06_26\2019_06_26_000
-    ......
+    Are the above configurations correct? (y/n) y    ......
     ```
 4. When all the configurations are set, press enter to start recording.
