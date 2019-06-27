@@ -116,7 +116,9 @@ if __name__ == '__main__':
             try_remain -= 1
         args.sequence_name = [cur_date + '_' + args.sequence_name]
     else:
-        indices = range(int(float(args.number_of_seqs)))
+        n_seq = int(float(args.number_of_seqs))
+        n_exist = len(sorted(os.listdir(args.base_dir)))
+        indices = range(n_exist, n_exist + n_seq)
         args.sequence_name = [cur_date + '_' + 'onrd' + '%03d' % idx for idx in indices]
 
     try_remain = 1
@@ -177,4 +179,3 @@ if __name__ == '__main__':
 
         print('Waiting for data processing ...')
         time.sleep(1)
-
