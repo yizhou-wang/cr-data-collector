@@ -76,9 +76,10 @@ if __name__ == '__main__':
 
     parser = ArgumentParser()
     parser.add_argument('-b', '--basedir', dest='base_dir', help='set base directory')
-    parser.add_argument('-s', '--seqnum', dest='sequence_number', help='set sequence series name')
+    parser.add_argument('-s', '--seqname', dest='sequence_name', help='set sequence series name')
     parser.add_argument('-fr', '--framerate', dest='frame_rate', help='set acquisition framerate')
     parser.add_argument('-n', '--numimg', dest='number_of_images', help='set acquisition image number')
+    parser.add_argument('-ns', '--numseq', dest='number_of_seqs', help='set acquisition sequence number')
     args = parser.parse_args()
 
     now = datetime.datetime.now()
@@ -97,13 +98,26 @@ if __name__ == '__main__':
             try_remain -= 1
     args.base_dir = os.path.join(args.base_dir, cur_date)
 
-    try_remain = MAX_TRY
-    while args.sequence_number is None or args.sequence_number == '':
+    try_remain = 1
+    while args.number_of_seqs is None or args.number_of_seqs == '':
         if try_remain == 0:
-            raise ValueError('Do not receive sequence name. Quit.')
-        args.sequence_number = input("Enter sequence name: ")
-        try_remain -= 1
-    args.sequence_number = cur_date + '_' + args.sequence_number
+            args.number_of_seqs = 1
+            break
+        else:
+            args.number_of_seqs = input("Enter sequence number (default=1): ")
+            try_remain -= 1
+
+    if int(float(args.number_of_seqs)) == 1:
+        try_remain = MAX_TRY
+        while args.sequence_name is None or args.sequence_name == '':
+            if try_remain == 0:
+                raise ValueError('Do not receive sequence name. Quit.')
+            args.sequence_name = input("Enter sequence name: ")
+            try_remain -= 1
+        args.sequence_name = [cur_date + '_' + args.sequence_name]
+    else:
+        indices = range(int(float(args.number_of_seqs)))
+        args.sequence_name = [cur_date + '_' + 'onrd' + '%03d' % idx for idx in indices]
 
     try_remain = 1
     while args.frame_rate is None or args.frame_rate == '':
@@ -123,10 +137,11 @@ if __name__ == '__main__':
             try_remain -= 1
 
     print('Input configurations:')
-    print('\tBase Directory:\t', args.base_dir)
-    print('\tSequence Name:\t', args.sequence_number)
-    print('\tFramerate:\t', args.frame_rate)
-    print('\tImage Number:\t', args.number_of_images)
+    print('\tBase Directory:\t\t', args.base_dir)
+    print('\tSequence Number:\t', args.number_of_seqs)
+    print('\tSequence Name:\t\t', args.sequence_name)
+    print('\tFramerate:\t\t', args.frame_rate)
+    print('\tImage Number:\t\t', args.number_of_images)
     print('')
 
     check_config = input("Are the above configurations correct? (y/n) ")
@@ -134,23 +149,32 @@ if __name__ == '__main__':
         print('Wrong configuration. Quit...')
         quit()
 
-    data_dir = os.path.join(args.base_dir, args.sequence_number)
-    print(data_dir)
-    if os.path.exists(data_dir):
-        overwrite = input("Sequence name already exist! Overwrite? (y/n) ")
-        if overwrite is not 'y':
-            print('Do not overwrite. Quit...')
-            quit()
+    # check sequence name exist
+    for name in args.sequence_name:
+        data_dir = os.path.join(args.base_dir, name)
+        if os.path.exists(data_dir):
+            print(name)
+            overwrite = input("Sequence name already exist! Overwrite? (y/n) ")
+            if overwrite is not 'y':
+                print('Do not overwrite. Quit...')
+                quit()
+            else:
+                shutil.rmtree(data_dir)
+                time.sleep(.00001)
+                os.makedirs(data_dir)
         else:
-            shutil.rmtree(data_dir)
+            os.makedirs(data_dir)
 
-    time.sleep(.0000000001)
-    if not os.path.exists(data_dir):
-        os.makedirs(data_dir)
+    for name in args.sequence_name:
+        data_dir = os.path.join(args.base_dir, name)
 
-    if not os.path.exists(os.path.join(data_dir, 'images')):
-        os.makedirs(os.path.join(data_dir, 'images'))
-    if not os.path.exists(os.path.join(data_dir, 'radar')):
-        os.makedirs(os.path.join(data_dir, 'radar'))
+        if not os.path.exists(os.path.join(data_dir, 'images')):
+            os.makedirs(os.path.join(data_dir, 'images'))
+        if not os.path.exists(os.path.join(data_dir, 'radar')):
+            os.makedirs(os.path.join(data_dir, 'radar'))
 
-    main(args.base_dir, args.sequence_number, float(args.frame_rate), int(float(args.number_of_images)))
+        main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)))
+
+        print('Waiting for data processing ...')
+        time.sleep(1)
+
