@@ -52,6 +52,7 @@ python run_datacol.py
             Framerate:               30
             Image Number:            30
     
-    Are the above configurations correct? (y/n) y    ......
+    Are the above configurations correct? (y/n) y
+    ......
     ```
 4. When all the configurations are set, press enter to start recording.
