@@ -39,6 +39,7 @@ import os
 import time
 
 from .radar_driver import run_radar
+from .radar_driver import init_radar
 
 
 # Use the following class and global variable to select whether
@@ -361,8 +362,10 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img)
         # pause
         input("Initialization finished! Press Enter to continue ...")
 
-        # start radar recording
-        run_radar()
+        # Init radar
+        engine = init_radar()
+        # Run radar
+        run_radar(engine)
 
         # record start time
         start_time = time.time()

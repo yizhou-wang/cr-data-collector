@@ -1,8 +1,12 @@
 import matlab.engine
 import time
 
+# time1 = time.time()
 eng = matlab.engine.start_matlab()
-#eng.RSTD_Interface_Exeng.quit()ample(nargout=0)
+# time2 = time.time() - time1
+# print(time2)
+
+# testing
 for i in range(3):
 	eng.Init_DataCaptureDemo(nargout=0)
 

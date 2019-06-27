@@ -2,17 +2,17 @@ import os
 import datetime
 
 def Packet_reorder_zerofill(file_dir, file_out_name, file_name):
+
     log_dir = 'D:\\tmp\\radar_pp\\' + file_name
     if os.path.exists(log_dir) is False:
-        # print(1)
         os.makedirs(log_dir)
-    #print(file_dir)
-    #print(file_out_name)
+
     command = 'C:\\ti\\mmwave_studio_01_00_00_00\\mmWaveStudio\\PostProc\\Packet_Reorder_Zerofill.exe ' \
                 + file_dir + ' ' + file_out_name + ' ' + log_dir + '\\log.txt'
     os.system(command)
     
 def reorder_zerofill_for_seq(folder_dir, seq):
+
     file_names = sorted(os.listdir(folder_dir))
     folder_out_dir = folder_dir.replace('radar', 'rad_reo_zerf')
 
@@ -22,12 +22,11 @@ def reorder_zerofill_for_seq(folder_dir, seq):
     for file_name in file_names:
         index = file_name[-5];
         file_dir = os.path.join(folder_dir, file_name)
-
         file_out_name = os.path.join(folder_out_dir, 'adc_data_' + index + '.bin')
-
         file_reo_zef = Packet_reorder_zerofill(file_dir, file_out_name, seq)
 
 def reorder_zerofill_for_date(date, data_dir='D:\\RawData'):
+
     base_dir = os.path.join(data_dir, date)
 
     if not os.path.exists(base_dir):
@@ -41,10 +40,8 @@ def reorder_zerofill_for_date(date, data_dir='D:\\RawData'):
 
     print("\nPacket reorder and zerofill finished for date %s." % date)
 
-if __name__ == '__main__':
 
-    # main("D:/RawData/0000/images", 'ost.yaml')
-    # load_calib('ost.yaml')
+if __name__ == '__main__':
 
     date = input("Enter date (default=today): ")
     if date == '':

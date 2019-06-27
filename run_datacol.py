@@ -8,7 +8,6 @@ from argparse import ArgumentParser
 from collector import run_single_camera
 from collector import copy_radar_data
 
-
 def main(base_dir, seq_name, frame_rate, num_img):
     """
     Example entry point; please see Enumeration example for more in-depth
@@ -50,6 +49,11 @@ def main(base_dir, seq_name, frame_rate, num_img):
 
         result &= run_single_camera(cam, seq_dir, frame_rate, num_img)
         print('Camera %d example complete... \n' % i)
+
+    # # Init radar
+    # engine = init_radar()
+    # # Run radar
+    # run_radar(engine)
 
     # Release reference to camera
     # NOTE: Unlike the C++ examples, we cannot rely on pointer objects being automatically
