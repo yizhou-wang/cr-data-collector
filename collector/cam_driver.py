@@ -360,7 +360,7 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img)
         timestamp_txt = open(os.path.join(seq_dir, 'timestamps.txt'), 'w')
 
         # pause
-        input("Initialization finished! Press Enter to continue ...")
+        # input("Initialization finished! Press Enter to continue ...")
 
         # Init radar
         engine = init_radar()

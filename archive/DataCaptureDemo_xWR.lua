@@ -111,7 +111,7 @@ else
 end
 RSTD.Sleep(1000)
 
-if (ar1.ChanNAdcConfig(1, 1, 0, 1, 1, 1, 1, 2, 1, 0) == 0) then
+if (ar1.ChanNAdcConfig(1, 0, 1, 1, 1, 1, 1, 2, 1, 0) == 0) then
     WriteToLog("ChanNAdcConfig Success\n", "green")
 else
     WriteToLog("ChanNAdcConfig failure\n", "red")
@@ -170,7 +170,7 @@ end
 RSTD.Sleep(1000)
 
 if((partId == 1642) or (partId == 1843)) then
-    if(ar1.ProfileConfig(0, 77, 20, 7, 40, 0, 0, 0, 0, 0, 0, 21.002, 1, 128, 4000, 0, 0, 30) == 0) then
+    if(ar1.ProfileConfig(0, 77, 3, 5, 30, 0, 0, 0, 0, 0, 0, 33.023, 1, 256, 11000, 0, 0, 30) == 0) then
         WriteToLog("ProfileConfig Success\n", "green")
     else
         WriteToLog("ProfileConfig failure\n", "red")
@@ -197,14 +197,14 @@ else
 end
 RSTD.Sleep(1000)
 
-if (ar1.ChirpConfig(1, 1, 0, 0, 0, 0, 0, 0, 1, 0) == 0) then
+if (ar1.ChirpConfig(1, 1, 0, 0, 0, 0, 0, 0, 0, 1) == 0) then
     WriteToLog("ChirpConfig Success\n", "green")
 else
     WriteToLog("ChirpConfig failure\n", "red")
 end
 RSTD.Sleep(1000)
 
-if (ar1.FrameConfig(0, 1, 900, 255, 33.333333, 0, 1) == 0) then
+if (ar1.FrameConfig(0, 1, 750, 255, 33.333333, 0, 1) == 0) then
     WriteToLog("FrameConfig Success\n", "green")
 else
     WriteToLog("FrameConfig failure\n", "red")
