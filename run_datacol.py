@@ -5,10 +5,11 @@ import time
 import datetime
 from argparse import ArgumentParser
 
-from collector import run_single_camera
+from collector import run_single_camera, run_multiple_cameras
 from collector import copy_radar_data
 
-def main(base_dir, seq_name, frame_rate, num_img):
+
+def main(base_dir, seq_name, frame_rate, num_img, syn=True):
     """
     Example entry point; please see Enumeration example for more in-depth
     comments on preparing and cleaning up the system.
@@ -21,6 +22,10 @@ def main(base_dir, seq_name, frame_rate, num_img):
 
     # Retrieve singleton reference to system object
     system = PySpin.System.GetInstance()
+
+    # Get current library version
+    version = system.GetLibraryVersion()
+    print('Library version: %d.%d.%d.%d' % (version.major, version.minor, version.type, version.build))
 
     # Retrieve list of cameras from the system
     cam_list = system.GetCameras()
@@ -42,24 +47,26 @@ def main(base_dir, seq_name, frame_rate, num_img):
         input('Done! Press Enter to exit...')
         return False
 
-    # Run example on each camera
-    for i, cam in enumerate(cam_list):
+    if syn or num_cameras == 1:
+        # Run example on each camera
+        for i, cam in enumerate(cam_list):
 
-        print('Running example for camera %d...' % i)
+            print('Running example for camera %d...' % i)
 
-        result &= run_single_camera(cam, seq_dir, frame_rate, num_img)
-        print('Camera %d example complete... \n' % i)
+            result &= run_single_camera(cam, seq_dir, frame_rate, num_img)
+            print('Camera %d example complete... \n' % i)
 
-    # # Init radar
-    # engine = init_radar()
-    # # Run radar
-    # run_radar(engine)
+        # Release reference to camera
+        # NOTE: Unlike the C++ examples, we cannot rely on pointer objects being automatically
+        # cleaned up when going out of scope.
+        # The usage of del is preferred to assigning the variable to None.
+        del cam
 
-    # Release reference to camera
-    # NOTE: Unlike the C++ examples, we cannot rely on pointer objects being automatically
-    # cleaned up when going out of scope.
-    # The usage of del is preferred to assigning the variable to None.
-    del cam
+    else:
+        # Run example on all cameras
+        print('Running example for all cameras...')
+
+        result = run_multiple_cameras(cam_list)
 
     # Clear camera list before releasing system
     cam_list.Clear()
