@@ -1,39 +1,4 @@
 # coding=utf-8
-# =============================================================================
-# Copyright © 2018 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
-#
-# This software is the confidential and proprietary information of FLIR
-# Integrated Imaging Solutions, Inc. ("Confidential Information"). You
-# shall not disclose such Confidential Information and shall use it only in
-# accordance with the terms of the license agreement you entered into
-# with FLIR Integrated Imaging Solutions, Inc. (FLIR).
-#
-# FLIR MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF THE
-# SOFTWARE, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-# PURPOSE, OR NON-INFRINGEMENT. FLIR SHALL NOT BE LIABLE FOR ANY DAMAGES
-# SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
-# THIS SOFTWARE OR ITS DERIVATIVES.
-# =============================================================================
-#
-# ChunkData.py shows how to get chunk data on an image, either from
-# the nodemap or from the image itself. It relies on information provided in
-# the Enumeration, Acquisition, and NodeMapInfo examples.
-#
-# It can also be helpful to familiarize yourself with the ImageFormatControl
-# and Exposure samples. As they are somewhat shorter and simpler, either
-# provides a strong introduction to camera customization.
-#
-# Chunk data provides information on various traits of an image. This includes
-# identifiers such as frame ID, properties such as black level, and more. This
-# information can be acquired from either the nodemap or the image itself.
-#
-# It may be preferable to grab chunk data from each individual image, as it
-# can be hard to verify whether data is coming from the correct image when
-# using the nodemap. This is because chunk data retrieved from the nodemap is
-# only valid for the current image; when GetNextImage() is called, chunk data
-# will be updated to that of the new current image.
-#
 import PySpin
 import os
 import time
