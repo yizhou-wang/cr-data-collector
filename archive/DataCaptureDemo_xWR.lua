@@ -210,3 +210,6 @@ else
     WriteToLog("FrameConfig failure\n", "red")
 end
 RSTD.Sleep(1000)
+
+RSTD.NetReset() 
+RSTD.Sleep(1000)
