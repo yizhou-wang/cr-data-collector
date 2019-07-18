@@ -51,7 +51,7 @@ def run_radar(eng):
 
 def copy_radar_data(base_dir, seq_name):
 
-    radar_root = "C:\\ti\\mmwave_studio_01_00_00_00\\mmWaveStudio\\PostProc"
+    radar_root = "C:\\ti\\mmwave_studio_02_00_00_02\\mmWaveStudio\\PostProc"
     original_files = sorted(os.listdir(os.path.join(radar_root)))
     TIME_FLAG = 0
     n_files = 0
