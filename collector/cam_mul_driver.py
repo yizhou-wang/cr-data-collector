@@ -19,7 +19,7 @@ class ChunkDataTypes:
 CHOSEN_CHUNK_DATA_TYPE = ChunkDataTypes.NODEMAP
 
 
-def acquire_images(cam_list, seq_dir, frame_rate, num_img):
+def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
     """
     This function acquires and saves 10 images from each device.
 
@@ -96,10 +96,11 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img):
         # pause
         # input("Initialization finished! Press Enter to continue ...")
 
-        # Init radar
-        engine = init_radar()
-        # Run radar
-        run_radar(engine)
+        if radar:
+            # Init radar
+            engine = init_radar()
+            # Run radar
+            run_radar(engine)
 
         # record start time
         start_time = time.time()
@@ -242,7 +243,7 @@ def print_device_info(nodemap, cam_num):
     return result
 
 
-def run_multiple_cameras(cam_list):
+def run_multiple_cameras(cam_list, radar=True):
     """
     This function acts as the body of the example; please see NodeMapInfo example
     for more in-depth comments on setting up cameras.
@@ -289,7 +290,7 @@ def run_multiple_cameras(cam_list):
             cam.Init()
 
         # Acquire images on all cameras
-        result &= acquire_images(cam_list)
+        result &= acquire_images(cam_list, radar)
 
         # Deinitialize each camera
         #

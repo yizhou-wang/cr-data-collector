@@ -262,7 +262,7 @@ def print_device_info(nodemap):
     return result
 
 
-def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img):
+def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img, radar=True):
     """
     This function acquires and saves 10 images from a device.
 
@@ -327,10 +327,11 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img)
         # pause
         # input("Initialization finished! Press Enter to continue ...")
 
-        # Init radar
-        engine = init_radar()
-        # Run radar
-        run_radar(engine)
+        if radar:
+            # Init radar
+            engine = init_radar()
+            # Run radar
+            run_radar(engine)
 
         # record start time
         start_time = time.time()
@@ -547,7 +548,7 @@ def disable_chunk_data(nodemap):
     return result
 
 
-def run_single_camera(cam, seq_dir, frame_rate, num_img):
+def run_single_camera(cam, seq_dir, frame_rate, num_img, radar=True):
     """
     This function acts as the body of the example; please see NodeMapInfo example
     for more in-depth comments on setting up cameras.
@@ -576,7 +577,7 @@ def run_single_camera(cam, seq_dir, frame_rate, num_img):
             return False
 
         # Acquire images and display chunk data
-        result &= acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img)
+        result &= acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img, radar)
 
         # Disable chunk data
         if disable_chunk_data(nodemap) is False:
