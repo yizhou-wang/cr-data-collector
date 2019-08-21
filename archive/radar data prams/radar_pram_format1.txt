@@ -1,0 +1,18 @@
+profileId	 - 0
+startFreqConst	 - 77
+idleTimeConst	 - 20
+adcStartTimeConst	 - 7
+rampEndTime	 - 40
+tx0OutPowerBackoffCode	 - 0
+tx1OutPowerBackoffCode	 - 0
+tx2OutPowerBackoffCode	 - 0
+tx0PhaseShifter	 - 0
+tx1PhaseShifter	 0
+tx2PhaseShifter	 - 0
+freqSlopeConst	 - 21.002
+txStartTime	 - 1
+numAdcSamples	 - 128
+digOutSampleRate	 - 4000
+hpfCornerFreq1	 - 0
+hpfCornerFreq2	 - 0
+rxGain	 - 30
