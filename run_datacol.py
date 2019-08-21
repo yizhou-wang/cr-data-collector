@@ -140,6 +140,7 @@ if __name__ == '__main__':
         else:
             args.frame_rate = input("Enter frame rate (default=30): ")
             try_remain -= 1
+    
     try_remain = 1
     while args.number_of_images is None or args.number_of_images == '':
         if try_remain == 0:
