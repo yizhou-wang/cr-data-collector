@@ -170,7 +170,7 @@ end
 RSTD.Sleep(1000)
 
 if((partId == 1642) or (partId == 1843)) then
-    if(ar1.ProfileConfig(0, 77, 3, 7, 40, 0, 0, 0, 0, 0, 0, 21.002, 1, 128, 4000, 0, 0, 30) == 0) then
+    if(ar1.ProfileConfig(0, 77, 5, 7, 40, 0, 0, 0, 0, 0, 0, 21.002, 1, 128, 4000, 0, 0, 30) == 0) then
         WriteToLog("ProfileConfig Success\n", "green")
     else
         WriteToLog("ProfileConfig failure\n", "red")
