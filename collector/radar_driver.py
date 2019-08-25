@@ -2,8 +2,17 @@ import os
 import shutil
 import time
 import matlab.engine
+import datetime
 # from pymouse import PyMouse
 # from pykeyboard import PyKeyboard
+
+
+def check_datetime(interval):
+    while True:
+        cur_datetime = datetime.datetime.now().minute   
+        if cur_datetime % interval == 0:
+            
+            return True
 
 
 def init_radar():

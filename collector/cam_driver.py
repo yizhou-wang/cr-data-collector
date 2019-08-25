@@ -5,7 +5,7 @@ import time
 
 from .radar_driver import run_radar
 from .radar_driver import init_radar
-
+from .radar_driver import check_datetime
 
 # Use the following class and global variable to select whether
 # chunk data is displayed from the image or the nodemap.
