@@ -416,7 +416,7 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img,
                     # optional parameter.
                     # image_converted = image_result.Convert(PySpin.PixelFormat_Mono8, PySpin.HQ_LINEAR)
 
-                    """
+                    
                     # Create a unique filename
                     # filename = '%s/images/%010d.jpg' % (seq_dir, i)
                     filename = os.path.join(seq_dir, 'images', '%010d.jpg' % i)
@@ -431,7 +431,7 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img,
                     # image_converted.Save(filename)
                     image_result.Save(filename)
                     print('Image saved at %s' % filename)
-                    """
+                    
 
                     # Display chunk data
                     if CHOSEN_CHUNK_DATA_TYPE == ChunkDataTypes.IMAGE:
@@ -439,10 +439,10 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img,
                     elif CHOSEN_CHUNK_DATA_TYPE == ChunkDataTypes.NODEMAP:
                         result, ts_str = display_chunk_data_from_nodemap(nodemap)
 
-                        # if i == 0:
-                        #     FIRST_TS = int(ts_str)
-                        # value_new = (int(ts_str) - FIRST_TS) * 1e-9
-                        # timestamp_txt.write("%.10f\n" % value_new)
+                        if i == 0:
+                            FIRST_TS = int(ts_str)
+                        value_new = (int(ts_str) - FIRST_TS) * 1e-9
+                        timestamp_txt.write("%.10f\n" % value_new)
 
                     # Release image
                     #
