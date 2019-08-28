@@ -8,7 +8,10 @@ import datetime
 
 
 def check_datetime(interval):
-   
+    """
+    This function checks the current compter time and if it is 
+    the integer multiples of desired interval, return True
+    """ 
     while True:
         cur_datetime = datetime.datetime.now().minute   
         if cur_datetime % interval == 0:
@@ -16,7 +19,10 @@ def check_datetime(interval):
 
 
 def init_radar():
-    
+    """
+    This function init the radar function, includes init demo etc
+    return the matlab engine
+    """
     eng = matlab.engine.start_matlab()
     print('start matlab engine')
     # add search path
@@ -31,7 +37,11 @@ def init_radar():
 
 
 def run_radar(eng):
-
+    """
+    This function start radar frame by use matlab command to
+    communicate with mmwavestudio software
+    Previously, we use virtual interface to control the mouse 
+    """
     # previous method
     # radar_m = PyMouse()
     # radar_k = PyKeyboard()
@@ -55,7 +65,9 @@ def run_radar(eng):
 
 
 def copy_radar_data(base_dir, seq_name):
-
+    """
+    This function is to copy the raw radar file after the capturation
+    """
     radar_root = "C:\\ti\\mmwave_studio_02_00_00_02\\mmWaveStudio\\PostProc"
     original_files = sorted(os.listdir(os.path.join(radar_root)))
     TIME_FLAG = 0
@@ -75,7 +87,8 @@ def copy_radar_data(base_dir, seq_name):
                     shutil.copyfile(old_path, new_path)
                     n_files += 1
             else:
-                print("Error!!! The size of data file is less than 1000kB, possiblely there is no radar data!!")
+                print("Error!!! The size of data file is less than 1000kB, \
+                    possiblely there is no radar data!!")
                 print("Please recapture this sequence and overwrite it")
                 break
 
