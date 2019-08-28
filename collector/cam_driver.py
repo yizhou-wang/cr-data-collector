@@ -262,7 +262,7 @@ def print_device_info(nodemap):
     return result
 
 
-def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img, radar=True):
+def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img, radar=True, interval=False):
     """
     This function acquires and saves 10 images from a device.
 
@@ -326,6 +326,9 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img,
 
         # pause
         # input("Initialization finished! Press Enter to continue ...")
+
+        if interval:
+            assert check_datetime(2) is True
 
         if radar:
             # Init radar

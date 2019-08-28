@@ -8,23 +8,21 @@ import datetime
 
 
 def check_datetime(interval):
+   
     while True:
         cur_datetime = datetime.datetime.now().minute   
         if cur_datetime % interval == 0:
-            
             return True
 
 
 def init_radar():
+    
     eng = matlab.engine.start_matlab()
     print('start matlab engine')
-
     # add search path
     eng.addpath('D:\\data-collection-tools\\cr-data-collector\\archive')
-
     # Init radar
     eng.Init_DataCaptureDemo(nargout=0)
-
     # avoid the two operation too close (result in data lack)
     time.sleep(1)
     print('Radar Initialization finished')
@@ -49,9 +47,7 @@ def run_radar(eng):
     # matlab control method
     eng.start_frame(nargout=0)
     print("Radar started.")
-
     # time.sleep(40)
-
     eng.quit()
     print('Stop matlab engine')
 
