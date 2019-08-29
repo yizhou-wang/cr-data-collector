@@ -9,6 +9,7 @@ from .cam_driver import display_chunk_data_from_image
 from .cam_driver import display_chunk_data_from_nodemap
 from .radar_driver import run_radar
 from .radar_driver import init_radar
+from .radar_driver import check_datetime
 
 
 # Use the following class and global variable to select whether
@@ -312,7 +313,7 @@ def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True):
                 return False
 
         # Acquire images on all cameras
-        result &= acquire_images(cam_list, seq_dir, frame_rate, num_img, radar)
+        result &= acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=True)
 
         # Deinitialize each camera
         #

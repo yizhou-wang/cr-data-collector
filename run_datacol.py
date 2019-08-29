@@ -9,7 +9,7 @@ from collector import run_single_camera, run_multiple_cameras
 from collector import copy_radar_data
 
 
-def main(base_dir, seq_name, frame_rate, num_img, syn=True):
+def main(base_dir, seq_name, frame_rate, num_img, syn=False):
     """
     Example entry point; please see Enumeration example for more in-depth
     comments on preparing and cleaning up the system.
@@ -53,6 +53,11 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
         # Run example on each camera
         for i, cam in enumerate(cam_list):
 
+            if not os.path.exists(os.path.join(seq_dir, 'images_%d' % i)):
+                os.makedirs(os.path.join(seq_dir, 'images_%d' % i))
+            if not os.path.exists(os.path.join(seq_dir, 'radar_h')):
+                os.makedirs(os.path.join(seq_dir, 'radar_h'))
+
             print('Running example for camera %d...' % i)
 
             result &= run_single_camera(cam, seq_dir, frame_rate, num_img)
@@ -65,10 +70,18 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
         del cam
 
     else:
+
+        for i in range(num_cameras):
+
+            if not os.path.exists(os.path.join(seq_dir, 'images_%d' % i)):
+                os.makedirs(os.path.join(seq_dir, 'images_%d' % i))
+            if not os.path.exists(os.path.join(seq_dir, 'radar_h')):
+                os.makedirs(os.path.join(seq_dir, 'radar_h'))
+
         # Run example on all cameras
         print('Running example for all cameras...')
 
-        result = run_multiple_cameras(cam_list)
+        result = run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True)
 
     # Clear camera list before releasing system
     cam_list.Clear()
@@ -181,13 +194,13 @@ if __name__ == '__main__':
         else:
             os.makedirs(data_dir)
 
-    for name in args.sequence_name:
-        data_dir = os.path.join(args.base_dir, name)
+    # for name in args.sequence_name:
+    #     data_dir = os.path.join(args.base_dir, name)
 
-        if not os.path.exists(os.path.join(data_dir, 'images')):
-            os.makedirs(os.path.join(data_dir, 'images'))
-        if not os.path.exists(os.path.join(data_dir, 'radar_h')):
-            os.makedirs(os.path.join(data_dir, 'radar_h'))
+    #     if not os.path.exists(os.path.join(data_dir, 'images')):
+    #         os.makedirs(os.path.join(data_dir, 'images'))
+    #     if not os.path.exists(os.path.join(data_dir, 'radar_h')):
+    #         os.makedirs(os.path.join(data_dir, 'radar_h'))
 
         main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)))
 
