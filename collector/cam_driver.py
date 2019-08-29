@@ -1,5 +1,9 @@
 # coding=utf-8
-import PySpin
+try:
+    import PySpin
+except:
+    print("Warning: PySpin is not installed!")
+    
 import os
 import time
 
