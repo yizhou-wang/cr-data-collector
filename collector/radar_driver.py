@@ -8,32 +8,37 @@ import datetime
 
 
 def check_datetime(interval):
+    """
+    This function checks the current compter time and if it is 
+    the integer multiples of desired interval, return True
+    """ 
+
     while True:
-        cur_datetime = datetime.datetime.now().minute   
-        if cur_datetime % interval == 0:
-            
+        cur_datetime_min = datetime.datetime.now().minute 
+        cur_datetime_sec = datetime.datetime.now().second  
+        if cur_datetime_min % interval == 0 and cur_datetime_sec == 0:
             return True
 
 
 def init_radar():
+    """
+    This function init the radar function, includes init demo etc
+    return the matlab engine
+    """
     eng = matlab.engine.start_matlab()
     print('start matlab engine')
-
     # add search path
-    eng.addpath('D:\\data-collection-tools\\cr-data-collector\\archive')
-
-    # Init radar
-    eng.Init_DataCaptureDemo(nargout=0)
-
-    # avoid the two operation too close (result in data lack)
-    time.sleep(1)
-    print('Radar Initialization finished')
-
+    eng.addpath('D:\\Documents\\GitHub\\cr-data-collector\\archive')
+    
     return eng
 
 
 def run_radar(eng):
-
+    """
+    This function start radar frame by use matlab command to
+    communicate with mmwavestudio software
+    Previously, we use virtual interface to control the mouse 
+    """
     # previous method
     # radar_m = PyMouse()
     # radar_k = PyKeyboard()
@@ -46,12 +51,22 @@ def run_radar(eng):
     # # record the click time and click trigger
     # radar_m.click(x_dim // 2 - 70, y_dim // 2 - 100, 1)
 
+    cur_datetime = datetime.datetime.now().second
     # matlab control method
+    # Init radar
+    eng.Init_DataCaptureDemo(nargout=0)
+    print('Radar Initialization finished. Prepared to record data...')
+    # avoid the two operation too close (result in data lack)
+    # time.sleep(1)
+    
+    while True:
+       new_datetime = datetime.datetime.now().second
+       if new_datetime == cur_datetime + 5:
+            break
+
     eng.start_frame(nargout=0)
     print("Radar started.")
-
     # time.sleep(40)
-
     eng.quit()
     print('Stop matlab engine')
 
@@ -59,7 +74,9 @@ def run_radar(eng):
 
 
 def copy_radar_data(base_dir, seq_name):
-
+    """
+    This function is to copy the raw radar file after the capturation
+    """
     radar_root = "C:\\ti\\mmwave_studio_02_00_00_02\\mmWaveStudio\\PostProc"
     original_files = sorted(os.listdir(os.path.join(radar_root)))
     TIME_FLAG = 0
@@ -79,7 +96,8 @@ def copy_radar_data(base_dir, seq_name):
                     shutil.copyfile(old_path, new_path)
                     n_files += 1
             else:
-                print("Error!!! The size of data file is less than 1000kB, possiblely there is no radar data!!")
+                print("Error!!! The size of data file is less than 1000kB, \
+                    possiblely there is no radar data!!")
                 print("Please recapture this sequence and overwrite it")
                 break
 
