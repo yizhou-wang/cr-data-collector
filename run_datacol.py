@@ -18,6 +18,8 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
     :rtype: bool
     """
     result = True
+    vertical = False
+
     seq_dir = os.path.join(base_dir, seq_name)
 
     # Retrieve singleton reference to system object
@@ -78,7 +80,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
 
     # move radar data files to right place
     time.sleep(1)
-    copy_radar_data(base_dir, seq_name)
+    copy_radar_data(base_dir, seq_name, vertical)
 
     return result
 
@@ -184,8 +186,8 @@ if __name__ == '__main__':
 
         if not os.path.exists(os.path.join(data_dir, 'images')):
             os.makedirs(os.path.join(data_dir, 'images'))
-        if not os.path.exists(os.path.join(data_dir, 'radar')):
-            os.makedirs(os.path.join(data_dir, 'radar'))
+        if not os.path.exists(os.path.join(data_dir, 'radar_h')):
+            os.makedirs(os.path.join(data_dir, 'radar_h'))
 
         main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)))
 

@@ -27,8 +27,10 @@ def init_radar():
     """
     eng = matlab.engine.start_matlab()
     print('start matlab engine')
+    file_location = os.getcwd() + '\\archive'
     # add search path
-    eng.addpath('D:\\Documents\\GitHub\\cr-data-collector\\archive')
+    eng.addpath(file_location)
+    # eng.addpath('D:\\Documents\\GitHub\\cr-data-collector\\archive')
     
     return eng
 
@@ -73,7 +75,7 @@ def run_radar(eng):
     return
 
 
-def copy_radar_data(base_dir, seq_name):
+def copy_radar_data(base_dir, seq_name, vertical):
     """
     This function is to copy the raw radar file after the capturation
     """
@@ -92,7 +94,11 @@ def copy_radar_data(base_dir, seq_name):
             if size_old > size_min:
                 if time_new > TIME_FLAG:
                     TIME_FLAG = time_new
-                    new_path = os.path.join(base_dir, seq_name, 'radar_v', fname)
+                    if vertical:
+                        new_path = os.path.join(base_dir, seq_name, 'radar_v', fname)
+                    else:
+                        new_path = os.path.join(base_dir, seq_name, 'radar_h', fname)
+                    
                     shutil.copyfile(old_path, new_path)
                     n_files += 1
             else:

@@ -20,7 +20,7 @@ def  run_single_radar(seq_dir, radar=True, interval=True):
         # Init radar
         engine = init_radar()
     
-    if interval:
+    if radar and interval:
         assert check_datetime(2) is True
     
     if radar:
@@ -48,6 +48,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
     :rtype: bool
     """
     result = True
+    vertical = True
     seq_dir = os.path.join(base_dir, seq_name)
 
     result &= run_single_radar(seq_dir)
@@ -55,7 +56,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
    
     # move radar data files to right place
     time.sleep(60)
-    copy_radar_data(base_dir, seq_name)
+    copy_radar_data(base_dir, seq_name, vertical)
     print('Done! Copy radar data...')
 
     return result

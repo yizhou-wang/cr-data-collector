@@ -21,7 +21,7 @@ class ChunkDataTypes:
 CHOSEN_CHUNK_DATA_TYPE = ChunkDataTypes.NODEMAP
 
 
-def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
+def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False):
     """
     This function acquires and saves 10 images from each device.
 
@@ -103,7 +103,7 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
             # Init radar
             engine = init_radar()
         
-        if interval:
+        if radar and interval:
             assert check_datetime(2) is True
         
         if radar:
