@@ -2,7 +2,9 @@
 import PySpin
 import os
 import time
+import numpy as np
 
+from .cam_driver import configure_chunk_data
 from .cam_driver import display_chunk_data_from_image
 from .cam_driver import display_chunk_data_from_nodemap
 from .radar_driver import run_radar
@@ -32,7 +34,7 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
     print('*** IMAGE ACQUISITION ***\n')
     try:
         result = True
-        timestamp_txt = [None] * len(cam_list)
+        timestamp_txt = []
 
         # Prepare each camera to acquire images
         #
@@ -91,7 +93,8 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
             node_acquisition_frame_rate.SetValue(frame_rate)
             print('Camera %d acquisition frame rate set to %d...\n' % (i, frame_rate))
 
-            timestamp_txt[i] = open(os.path.join(seq_dir, 'timestamps_%d.txt' % i), 'w')
+            f = open(os.path.join(seq_dir, 'timestamps_%d.txt' % i), 'w')
+            timestamp_txt.append(f)
 
         # pause
         # input("Initialization finished! Press Enter to continue ...")
@@ -127,6 +130,8 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
         # needed. It is important that the inner loop be the one iterating
         # through the cameras; otherwise, all images will be grabbed from a
         # single camera before grabbing any images from another.
+
+        FIRST_TS_list = np.zeros((len(cam_list), ))
         for n in range(num_img):
             for i, cam in enumerate(cam_list):
                 try:
@@ -145,7 +150,7 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
                         # image_converted = image_result.Convert(PySpin.PixelFormat_Mono8, PySpin.HQ_LINEAR)
 
                         # Create a unique filename
-                        filename = os.path.join(seq_dir, 'images_' % i, '%010d.jpg' % n)
+                        filename = os.path.join(seq_dir, 'images_%d' % i, '%010d.jpg' % n)
                         # TODO: check order of left/right cameras
 
                         # if device_serial_number:
@@ -163,10 +168,12 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
                         elif CHOSEN_CHUNK_DATA_TYPE == ChunkDataTypes.NODEMAP:
                             result, ts_str = display_chunk_data_from_nodemap(cam.GetNodeMap())
 
-                            if i == 0:
-                                FIRST_TS = int(ts_str)
-                            value_new = (int(ts_str) - FIRST_TS) * 1e-9
-                            timestamp_txt[i].write("%.10f\n" % value_new)
+                            if n == 0:
+                                FIRST_TS_list[i] = int(ts_str)
+                            value_new = (int(ts_str) - FIRST_TS_list[i]) * 1e-9
+                            # timestamp_txt[i].write("%.10f\n" % value_new)
+                            f = open(os.path.join(seq_dir, 'timestamps_%d.txt' % i), 'a+')
+                            f.write("%.10f\n" % value_new)
 
                     # Release image
                     image_result.Release()
@@ -243,7 +250,7 @@ def print_device_info(nodemap, cam_num):
     return result
 
 
-def run_multiple_cameras(cam_list, radar=True):
+def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True):
     """
     This function acts as the body of the example; please see NodeMapInfo example
     for more in-depth comments on setting up cameras.
@@ -289,8 +296,15 @@ def run_multiple_cameras(cam_list, radar=True):
             # Initialize camera
             cam.Init()
 
+            # Retrieve GenICam nodemap
+            nodemap = cam.GetNodeMap()
+
+            # Configure chunk data
+            if configure_chunk_data(nodemap) is False:
+                return False
+
         # Acquire images on all cameras
-        result &= acquire_images(cam_list, radar)
+        result &= acquire_images(cam_list, seq_dir, frame_rate, num_img, radar)
 
         # Deinitialize each camera
         #
