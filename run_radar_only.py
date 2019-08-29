@@ -160,10 +160,8 @@ if __name__ == '__main__':
     for name in args.sequence_name:
         data_dir = os.path.join(args.base_dir, name)
 
-        if not os.path.exists(os.path.join(data_dir, 'images')):
-            os.makedirs(os.path.join(data_dir, 'images'))
-        if not os.path.exists(os.path.join(data_dir, 'radar')):
-            os.makedirs(os.path.join(data_dir, 'radar'))
+        if not os.path.exists(os.path.join(data_dir, 'radar_v')):
+            os.makedirs(os.path.join(data_dir, 'radar_v'))
 
         main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)))
 

@@ -92,7 +92,7 @@ def copy_radar_data(base_dir, seq_name):
             if size_old > size_min:
                 if time_new > TIME_FLAG:
                     TIME_FLAG = time_new
-                    new_path = os.path.join(base_dir, seq_name, 'radar', fname)
+                    new_path = os.path.join(base_dir, seq_name, 'radar_v', fname)
                     shutil.copyfile(old_path, new_path)
                     n_files += 1
             else:
