@@ -12,9 +12,11 @@ def check_datetime(interval):
     This function checks the current compter time and if it is 
     the integer multiples of desired interval, return True
     """ 
+
     while True:
-        cur_datetime = datetime.datetime.now().minute   
-        if cur_datetime % interval == 0:
+        cur_datetime_min = datetime.datetime.now().minute 
+        cur_datetime_sec = datetime.datetime.now().second  
+        if cur_datetime_min % interval == 0 and cur_datetime_sec == 0:
             return True
 
 
@@ -26,13 +28,8 @@ def init_radar():
     eng = matlab.engine.start_matlab()
     print('start matlab engine')
     # add search path
-    eng.addpath('D:\\data-collection-tools\\cr-data-collector\\archive')
-    # Init radar
-    eng.Init_DataCaptureDemo(nargout=0)
-    # avoid the two operation too close (result in data lack)
-    time.sleep(1)
-    print('Radar Initialization finished')
-
+    eng.addpath('D:\\Documents\\GitHub\\cr-data-collector\\archive')
+    
     return eng
 
 
@@ -54,7 +51,19 @@ def run_radar(eng):
     # # record the click time and click trigger
     # radar_m.click(x_dim // 2 - 70, y_dim // 2 - 100, 1)
 
+    cur_datetime = datetime.datetime.now().second
     # matlab control method
+    # Init radar
+    eng.Init_DataCaptureDemo(nargout=0)
+    print('Radar Initialization finished. Prepared to record data...')
+    # avoid the two operation too close (result in data lack)
+    # time.sleep(1)
+    
+    while True:
+       new_datetime = datetime.datetime.now().second
+       if new_datetime == cur_datetime + 5:
+            break
+
     eng.start_frame(nargout=0)
     print("Radar started.")
     # time.sleep(40)

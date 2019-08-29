@@ -9,7 +9,7 @@ from collector import init_radar
 from collector import check_datetime
 
 
-def  run_single_radar(radar=True, interval=True):
+def  run_single_radar(seq_dir, radar=True, interval=True):
     """
     This function is to run the other radar on different laptop
     with interval checking and copy raw radar data
@@ -50,7 +50,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
     result = True
     seq_dir = os.path.join(base_dir, seq_name)
 
-    result &= run_single_radar()
+    result &= run_single_radar(seq_dir)
     print('Radar %d example complete... \n' % 1)
    
     # move radar data files to right place
