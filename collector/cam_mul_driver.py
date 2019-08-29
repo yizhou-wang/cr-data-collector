@@ -192,7 +192,10 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar=True):
                 timestamp_txt[i].close()
 
         with open(os.path.join(seq_dir, 'start_time.txt'), 'w') as start_time_txt:
-            start_time_txt.write("%s" % start_time)
+            start_time_txt.write("%s\n" % start_time)
+            for ff in FIRST_TS_list:
+                start_time_txt.write("%d " % ff)
+                
             # TODO: transform time format to readable
 
         # End acquisition for each camera
