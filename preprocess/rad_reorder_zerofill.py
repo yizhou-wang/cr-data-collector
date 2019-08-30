@@ -43,7 +43,7 @@ def reorder_zerofill_for_date(date, data_dir='D:\\RawData'):
             print('donot have the horizontal radar data')
         
         try:
-            folder_dir_h = folder_dir + 'v'
+            folder_dir_v = folder_dir + 'v'
             reorder_zerofill_for_seq(folder_dir_v,seq)
         except:
             print('do not have the vertical radar data')
