@@ -113,7 +113,7 @@ def configure_chunk_data(nodemap):
     return result
 
 
-def display_chunk_data_from_nodemap(nodemap):
+def display_chunk_data_from_nodemap(nodemap, verbose=False):
     """
     This function displays all available chunk data by looping through the
     chunk data category node on the nodemap.
@@ -123,7 +123,7 @@ def display_chunk_data_from_nodemap(nodemap):
     :return: True if successful, False otherwise
     :rtype: bool
     """
-    print('Printing chunk data from nodemap...')
+    # print('Printing chunk data from nodemap...')
 
     try:
         result = True
@@ -157,7 +157,8 @@ def display_chunk_data_from_nodemap(nodemap):
             # easier than dealing with each individual node type.
             else:
                 feature_value = PySpin.CValuePtr(feature)
-                print('{} {}'.format(feature_display_name, feature_value.ToString()))
+                if verbose:
+                    print('{} {}'.format(feature_display_name, feature_value.ToString()))
 
                 if feature_node.GetDisplayName() == 'Chunk Timestamp':
                     ts_str = feature_value.ToString()

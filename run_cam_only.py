@@ -5,7 +5,7 @@ import time
 import datetime
 from argparse import ArgumentParser
 
-from collector import run_single_camera, run_multiple_cameras
+from collector import run_single_camera, run_multiple_cameras, sort_cams
 from collector import copy_radar_data
 
 
@@ -29,8 +29,8 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
 
     # Retrieve list of cameras from the system
     cam_list = system.GetCameras()
-
     num_cameras = cam_list.GetSize()
+    cam_list = sort_cams(cam_list)
 
     print('Number of cameras detected: %d' % num_cameras)
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
         args.sequence_name = [cur_date + '_' + args.sequence_name]
     else:
         n_seq = int(float(args.number_of_seqs))
-        n_exist = len(sorted(os.listdir(args.base_dir)))
+        n_exist = len([x for x in os.listdir(args.base_dir) if 'onrd' in x])
         indices = range(n_exist, n_exist + n_seq)
         args.sequence_name = [cur_date + '_' + 'onrd' + '%03d' % idx for idx in indices]
 
