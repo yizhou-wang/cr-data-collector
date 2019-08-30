@@ -83,6 +83,9 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
             node_trigger_mode.SetIntValue(trigger_mode_off)
             print('Camera %d trigger mode set to off...' % i)
 
+            ####################
+            # Framerate
+            ####################
             # Set acquisition frame rate enable to true
             acquisition_frame_rate_active = PySpin.CBooleanPtr(cam.GetNodeMap().GetNode('AcquisitionFrameRateEnable'))
             if PySpin.IsAvailable(acquisition_frame_rate_active) and PySpin.IsWritable(acquisition_frame_rate_active):
@@ -97,6 +100,34 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
                 return False
             node_acquisition_frame_rate.SetValue(frame_rate)
             print('Camera %d acquisition frame rate set to %d...\n' % (i, frame_rate))
+
+            ####################
+            # BufferHandling
+            ####################
+            # Retrieve Stream Parameters device nodemap
+            s_node_map = cam.GetTLStreamNodeMap()
+
+            # Retrieve Buffer Handling Mode Information
+            handling_mode = PySpin.CEnumerationPtr(s_node_map.GetNode('StreamBufferHandlingMode'))
+            if not PySpin.IsAvailable(handling_mode) or not PySpin.IsWritable(handling_mode):
+                print('Unable to set Buffer Handling mode (node retrieval). Aborting...\n')
+                return False
+
+            handling_mode_entry = PySpin.CEnumEntryPtr(handling_mode.GetCurrentEntry())
+            if not PySpin.IsAvailable(handling_mode_entry) or not PySpin.IsReadable(handling_mode_entry):
+                print('Unable to set Buffer Handling mode (Entry retrieval). Aborting...\n')
+                return False
+
+            # Retrieve and modify Stream Buffer Count
+            buffer_count = PySpin.CIntegerPtr(s_node_map.GetNode('StreamBufferCountManual'))
+            if not PySpin.IsAvailable(buffer_count) or not PySpin.IsWritable(buffer_count):
+                print('Unable to set Buffer Count (Integer node retrieval). Aborting...\n')
+                return False
+
+            # Display Buffer Info
+            print('\nDefault Buffer Handling Mode: %s' % handling_mode_entry.GetDisplayName())
+            print('Default Buffer Count: %d' % buffer_count.GetValue())
+            print('Maximum Buffer Count: %d' % buffer_count.GetMax())
 
             f = open(os.path.join(seq_dir, 'timestamps_%d.txt' % i), 'w')
             timestamp_txt.append(f)
@@ -124,6 +155,7 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
             cam.BeginAcquisition()
             print('Camera %d started acquiring images...' % i)
 
+        for i, cam in enumerate(cam_list):
             # Retrieve device serial number for filename0
             node_device_serial_number = PySpin.CStringPtr(cam.GetTLDeviceNodeMap().GetNode('DeviceSerialNumber'))
 
