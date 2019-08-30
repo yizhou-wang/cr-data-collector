@@ -3,7 +3,7 @@ try:
     import PySpin
 except:
     print("Warning: PySpin is not installed!")
-    
+
 import os
 import time
 
@@ -261,6 +261,59 @@ def print_device_info(nodemap):
             print('Device control information not available.')
     except PySpin.SpinnakerException as ex:
         print('Error: %s' % ex)
+        result = False
+
+    return result
+
+
+def configure_buffer(s_node_map):
+
+    try:
+        result = True
+        ####################
+        # BufferHandling
+        ####################
+
+        # Retrieve Buffer Handling Mode Information
+        handling_mode = PySpin.CEnumerationPtr(s_node_map.GetNode('StreamBufferHandlingMode'))
+        if not PySpin.IsAvailable(handling_mode) or not PySpin.IsWritable(handling_mode):
+            print('Unable to set Buffer Handling mode (node retrieval). Aborting...\n')
+            return False
+
+        handling_mode_entry = PySpin.CEnumEntryPtr(handling_mode.GetCurrentEntry())
+        if not PySpin.IsAvailable(handling_mode_entry) or not PySpin.IsReadable(handling_mode_entry):
+            print('Unable to set Buffer Handling mode (Entry retrieval). Aborting...\n')
+            return False
+
+        # Set stream buffer Count Mode to manual
+        stream_buffer_count_mode = PySpin.CEnumerationPtr(s_node_map.GetNode('StreamBufferCountMode'))
+        if not PySpin.IsAvailable(stream_buffer_count_mode) or not PySpin.IsWritable(stream_buffer_count_mode):
+            print('Unable to set Buffer Count Mode (node retrieval). Aborting...\n')
+            return False
+
+        stream_buffer_count_mode_manual = PySpin.CEnumEntryPtr(stream_buffer_count_mode.GetEntryByName('Manual'))
+        if not PySpin.IsAvailable(stream_buffer_count_mode_manual) or not PySpin.IsReadable(stream_buffer_count_mode_manual):
+            print('Unable to set Buffer Count Mode entry (Entry retrieval). Aborting...\n')
+            return False
+
+        stream_buffer_count_mode.SetIntValue(stream_buffer_count_mode_manual.GetValue())
+        print('Stream Buffer Count Mode set to manual...')
+
+        # Retrieve and modify Stream Buffer Count
+        buffer_count = PySpin.CIntegerPtr(s_node_map.GetNode('StreamBufferCountManual'))
+        if not PySpin.IsAvailable(buffer_count) or not PySpin.IsWritable(buffer_count):
+            print('Unable to set Buffer Count (Integer node retrieval). Aborting...\n')
+            return False
+
+        # Display Buffer Info
+        print('\nDefault Buffer Handling Mode: %s' % handling_mode_entry.GetDisplayName())
+        print('Default Buffer Count: %d' % buffer_count.GetValue())
+        print('Maximum Buffer Count: %d' % buffer_count.GetMax())
+
+        buffer_count.SetValue(buffer_count.GetMax())
+        print('Buffer count now set to: %d' % buffer_count.GetValue())
+
+    except:
         result = False
 
     return result
@@ -582,9 +635,13 @@ def run_single_camera(cam, seq_dir, frame_rate, num_img, radar=True):
 
         # Retrieve GenICam nodemap
         nodemap = cam.GetNodeMap()
+        # Retrieve Stream Parameters device nodemap
+        s_node_map = cam.GetTLStreamNodeMap()
 
         # Configure chunk data
         if configure_chunk_data(nodemap) is False:
+            return False
+        if configure_buffer(s_node_map) is False:
             return False
 
         # Acquire images and display chunk data

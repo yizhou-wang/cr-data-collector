@@ -8,7 +8,7 @@ import os
 import time
 import numpy as np
 
-from .cam_driver import configure_chunk_data
+from .cam_driver import configure_chunk_data, configure_buffer
 from .cam_driver import display_chunk_data_from_image
 from .cam_driver import display_chunk_data_from_nodemap
 from .radar_driver import run_radar
@@ -100,34 +100,6 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
                 return False
             node_acquisition_frame_rate.SetValue(frame_rate)
             print('Camera %d acquisition frame rate set to %d...\n' % (i, frame_rate))
-
-            ####################
-            # BufferHandling
-            ####################
-            # Retrieve Stream Parameters device nodemap
-            s_node_map = cam.GetTLStreamNodeMap()
-
-            # Retrieve Buffer Handling Mode Information
-            handling_mode = PySpin.CEnumerationPtr(s_node_map.GetNode('StreamBufferHandlingMode'))
-            if not PySpin.IsAvailable(handling_mode) or not PySpin.IsWritable(handling_mode):
-                print('Unable to set Buffer Handling mode (node retrieval). Aborting...\n')
-                return False
-
-            handling_mode_entry = PySpin.CEnumEntryPtr(handling_mode.GetCurrentEntry())
-            if not PySpin.IsAvailable(handling_mode_entry) or not PySpin.IsReadable(handling_mode_entry):
-                print('Unable to set Buffer Handling mode (Entry retrieval). Aborting...\n')
-                return False
-
-            # Retrieve and modify Stream Buffer Count
-            buffer_count = PySpin.CIntegerPtr(s_node_map.GetNode('StreamBufferCountManual'))
-            if not PySpin.IsAvailable(buffer_count) or not PySpin.IsWritable(buffer_count):
-                print('Unable to set Buffer Count (Integer node retrieval). Aborting...\n')
-                return False
-
-            # Display Buffer Info
-            print('\nDefault Buffer Handling Mode: %s' % handling_mode_entry.GetDisplayName())
-            print('Default Buffer Count: %d' % buffer_count.GetValue())
-            print('Maximum Buffer Count: %d' % buffer_count.GetMax())
 
             f = open(os.path.join(seq_dir, 'timestamps_%d.txt' % i), 'w')
             timestamp_txt.append(f)
@@ -343,9 +315,13 @@ def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True):
 
             # Retrieve GenICam nodemap
             nodemap = cam.GetNodeMap()
+            # Retrieve Stream Parameters device nodemap
+            s_node_map = cam.GetTLStreamNodeMap()
 
             # Configure chunk data
             if configure_chunk_data(nodemap) is False:
+                return False
+            if configure_buffer(s_node_map) is False:
                 return False
 
         # Acquire images on all cameras
