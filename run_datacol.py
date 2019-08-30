@@ -84,7 +84,8 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
         result = run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True)
 
     # Clear camera list before releasing system
-    cam_list.Clear()
+    # cam_list.Clear()
+    del cam_list
 
     # Release system instance
     system.ReleaseInstance()
