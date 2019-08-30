@@ -14,8 +14,9 @@ def check_datetime(interval):
     """ 
 
     while True:
-        cur_datetime_min = datetime.datetime.now().minute 
-        cur_datetime_sec = datetime.datetime.now().second  
+        cur_datetime = datetime.datetime.now()
+        cur_datetime_min = cur_datetime.minute
+        cur_datetime_sec = cur_datetime.second
         if cur_datetime_min % interval == 0 and cur_datetime_sec == 0:
             print(cur_datetime_min, cur_datetime_sec)
             return True
