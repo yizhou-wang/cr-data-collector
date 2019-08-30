@@ -52,11 +52,11 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
     if syn or num_cameras == 1:
         # Run example on each camera
         for i, cam in enumerate(cam_list):
-
             if not os.path.exists(os.path.join(seq_dir, 'images_%d' % i)):
                 os.makedirs(os.path.join(seq_dir, 'images_%d' % i))
-            if not os.path.exists(os.path.join(seq_dir, 'radar_h')):
-                os.makedirs(os.path.join(seq_dir, 'radar_h'))
+                
+        if not os.path.exists(os.path.join(seq_dir, 'radar_h')):
+            os.makedirs(os.path.join(seq_dir, 'radar_h'))
 
             print('Running example for camera %d...' % i)
 
@@ -72,11 +72,11 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
     else:
 
         for i in range(num_cameras):
-
             if not os.path.exists(os.path.join(seq_dir, 'images_%d' % i)):
                 os.makedirs(os.path.join(seq_dir, 'images_%d' % i))
-            if not os.path.exists(os.path.join(seq_dir, 'radar_h')):
-                os.makedirs(os.path.join(seq_dir, 'radar_h'))
+
+        if not os.path.exists(os.path.join(seq_dir, 'radar_h')):
+            os.makedirs(os.path.join(seq_dir, 'radar_h'))
 
         # Run example on all cameras
         print('Running example for all cameras...')

@@ -9,7 +9,7 @@ from collector import init_radar
 from collector import check_datetime
 
 
-def  run_single_radar(seq_dir, radar=True, interval=True):
+def run_single_radar(seq_dir, radar=True, interval=True):
     """
     This function is to run the other radar on different laptop
     with interval checking and copy raw radar data
@@ -50,6 +50,9 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
     result = True
     vertical = True
     seq_dir = os.path.join(base_dir, seq_name)
+
+    if not os.path.exists(os.path.join(seq_dir, 'radar_v')):
+        os.makedirs(os.path.join(seq_dir, 'radar_v'))
 
     result &= run_single_radar(seq_dir)
     print('Radar %d example complete... \n' % 1)
@@ -158,11 +161,11 @@ if __name__ == '__main__':
         else:
             os.makedirs(data_dir)
 
-    for name in args.sequence_name:
-        data_dir = os.path.join(args.base_dir, name)
+    # for name in args.sequence_name:
+    #     data_dir = os.path.join(args.base_dir, name)
 
-        if not os.path.exists(os.path.join(data_dir, 'radar_v')):
-            os.makedirs(os.path.join(data_dir, 'radar_v'))
+        # if not os.path.exists(os.path.join(data_dir, 'radar_v')):
+        #     os.makedirs(os.path.join(data_dir, 'radar_v'))
 
         main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)))
 
