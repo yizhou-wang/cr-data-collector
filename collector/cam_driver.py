@@ -390,7 +390,7 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img,
             engine = init_radar()
         
         if radar and interval:
-            assert check_datetime(2) is True
+            assert check_datetime(3) is True
         
         if radar:
             # Run radar
