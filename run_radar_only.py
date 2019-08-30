@@ -21,7 +21,7 @@ def run_single_radar(seq_dir, radar=True, interval=True):
         engine = init_radar()
     
     if radar and interval:
-        assert check_datetime(2) is True
+        assert check_datetime(3) is True
     
     if radar:
         # Run radar
