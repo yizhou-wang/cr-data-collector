@@ -124,6 +124,9 @@ if __name__ == '__main__':
             try_remain -= 1
     args.base_dir = os.path.join(args.base_dir, cur_date)
 
+    if not os.path.exists(args.base_dir):
+        os.makedirs(args.base_dir)
+
     try_remain = 1
     while args.number_of_seqs is None or args.number_of_seqs == '':
         if try_remain == 0:
