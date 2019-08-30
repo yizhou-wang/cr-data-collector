@@ -34,9 +34,19 @@ def reorder_zerofill_for_date(date, data_dir='D:\\RawData'):
 
     seqs = sorted(os.listdir(base_dir))
     for seq in seqs:
-        folder_dir = os.path.join(base_dir, seq, 'radar')
+        folder_dir = os.path.join(base_dir, seq, 'radar_')
         print("Packet reorder and zerofill %s ..." % folder_dir)
-        reorder_zerofill_for_seq(folder_dir,seq)
+        try:
+            folder_dir_h = folder_dir + 'h'
+            reorder_zerofill_for_seq(folder_dir_h,seq)
+        except:
+            print('donot have the horizontal radar data')
+        
+        try:
+            folder_dir_h = folder_dir + 'v'
+            reorder_zerofill_for_seq(folder_dir_v,seq)
+        except:
+            print('do not have the vertical radar data')
 
     print("\nPacket reorder and zerofill finished for date %s." % date)
 
