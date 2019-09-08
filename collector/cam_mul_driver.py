@@ -6,24 +6,18 @@ except:
 
 import os
 import time
+import datetime
 import numpy as np
 
-from .cam_driver import configure_chunk_data, configure_buffer
-from .cam_driver import display_chunk_data_from_image
-from .cam_driver import display_chunk_data_from_nodemap
+
+from .cam_config import ChunkDataTypes, CHOSEN_CHUNK_DATA_TYPE
+from .cam_config import configure_chunk_data, disable_chunk_data, \
+    display_chunk_data_from_image, display_chunk_data_from_nodemap
+from .cam_config import configure_buffer, configure_trigger_multi
+from .cam_config import print_device_info_multi
 from .radar_driver import run_radar
 from .radar_driver import init_radar
 from .radar_driver import check_datetime
-
-
-# Use the following class and global variable to select whether
-# chunk data is displayed from the image or the nodemap.
-class ChunkDataTypes:
-    IMAGE = 1
-    NODEMAP = 2
-
-
-CHOSEN_CHUNK_DATA_TYPE = ChunkDataTypes.NODEMAP
 
 
 def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False):
@@ -40,18 +34,9 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
     try:
         result = True
         timestamp_txt = []
+        start_time_cam = []
 
         # Prepare each camera to acquire images
-        #
-        # *** NOTES ***
-        # For pseudo-simultaneous streaming, each camera is prepared as if it
-        # were just one, but in a loop. Notice that cameras are selected with
-        # an index. We demonstrate pseduo-simultaneous streaming because true
-        # simultaneous streaming would require multiple process or threads,
-        # which is too complex for an example.
-        #
-        # Serial numbers are the only persistent objects we gather in this
-        # example, which is why a vector is created.
         for i, cam in enumerate(cam_list):
 
             # Set acquisition mode to continuous
@@ -69,19 +54,6 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
             acquisition_mode_continuous = node_acquisition_mode_continuous.GetValue()
             node_acquisition_mode.SetIntValue(acquisition_mode_continuous)
             print('Camera %d acquisition mode set to continuous...' % i)
-
-            # Set trigger mode to Off
-            node_trigger_mode = PySpin.CEnumerationPtr(cam.GetNodeMap().GetNode('TriggerMode'))
-            if not PySpin.IsAvailable(node_trigger_mode) or not PySpin.IsWritable(node_trigger_mode):
-                print('Unable to set trigger mode to off (node retrieval). Aborting...')
-                return False
-            node_trigger_mode_off = node_trigger_mode.GetEntryByName('Off')
-            if not PySpin.IsAvailable(node_trigger_mode_off) or not PySpin.IsReadable(node_trigger_mode_off):
-                print('Unable to set trigger mode to off (entry retrieval). Aborting...')
-                return False
-            trigger_mode_off = node_trigger_mode_off.GetValue()
-            node_trigger_mode.SetIntValue(trigger_mode_off)
-            print('Camera %d trigger mode set to off...' % i)
 
             ####################
             # Framerate
@@ -112,8 +84,8 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
             engine = init_radar()
         
         if radar and interval:
-            assert check_datetime(3) is True
-        
+            assert check_datetime(1) is True
+
         if radar:
             # Run radar
             run_radar(engine)
@@ -124,7 +96,10 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
 
         for i, cam in enumerate(cam_list):
             # Begin acquiring images
+            ts_tmp = time.time()
             cam.BeginAcquisition()
+            start_time_cam.append(time.time())
+            print('begin acq %s' % (time.time() - ts_tmp))
             print('Camera %d started acquiring images...' % i)
 
         for i, cam in enumerate(cam_list):
@@ -201,9 +176,14 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
                 timestamp_txt[i].close()
 
         with open(os.path.join(seq_dir, 'start_time.txt'), 'w') as start_time_txt:
-            start_time_txt.write("%s\n" % start_time)
+            time_str = datetime.datetime.fromtimestamp(start_time).strftime('%Y-%m-%d %H:%M:%S.%f')
+            start_time_txt.write("%s\n" % time_str)
+            for cam_st in start_time_cam:
+                time_str = datetime.datetime.fromtimestamp(cam_st).strftime('%Y-%m-%d %H:%M:%S.%f')
+                start_time_txt.write("%s\n" % time_str)
+            start_time_txt.write("\n")
             for ff in FIRST_TS_list:
-                start_time_txt.write("%d " % ff)
+                start_time_txt.write("%d\n" % ff)
                 
             # TODO: transform time format to readable
 
@@ -225,44 +205,6 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
     except PySpin.SpinnakerException as ex:
         print('Error: %s' % ex)
         result = False
-
-    return result
-
-
-def print_device_info(nodemap, cam_num):
-    """
-    This function prints the device information of the camera from the transport
-    layer; please see NodeMapInfo example for more in-depth comments on printing
-    device information from the nodemap.
-
-    :param nodemap: Transport layer device nodemap.
-    :param cam_num: Camera number.
-    :type nodemap: INodeMap
-    :type cam_num: int
-    :returns: True if successful, False otherwise.
-    :rtype: bool
-    """
-
-    print('Printing device information for camera %d... \n' % cam_num)
-
-    try:
-        result = True
-        node_device_information = PySpin.CCategoryPtr(nodemap.GetNode('DeviceInformation'))
-
-        if PySpin.IsAvailable(node_device_information) and PySpin.IsReadable(node_device_information):
-            features = node_device_information.GetFeatures()
-            for feature in features:
-                node_feature = PySpin.CValuePtr(feature)
-                print('%s: %s' % (node_feature.GetName(),
-                                  node_feature.ToString() if PySpin.IsReadable(node_feature) else 'Node not readable'))
-
-        else:
-            print('Device control information not available.')
-        print()
-
-    except PySpin.SpinnakerException as ex:
-        print('Error: %s' % ex)
-        return False
 
     return result
 
@@ -295,7 +237,7 @@ def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True):
             nodemap_tldevice = cam.GetTLDeviceNodeMap()
 
             # Print device information
-            result &= print_device_info(nodemap_tldevice, i)
+            result &= print_device_info_multi(nodemap_tldevice, i)
 
         # Initialize each camera
         #
@@ -324,6 +266,9 @@ def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True):
             if configure_buffer(s_node_map) is False:
                 return False
 
+        if configure_trigger_multi(cam_list) is False:
+            return False
+
         # Acquire images on all cameras
         result &= acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=True)
 
@@ -333,6 +278,10 @@ def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True):
         # Again, each camera must be deinitialized separately by first
         # selecting the camera and then deinitializing it.
         for cam in cam_list:
+
+            # Disable chunk data
+            if disable_chunk_data(cam.GetNodeMap()) is False:
+                return False
 
             # Deinitialize camera
             cam.DeInit()

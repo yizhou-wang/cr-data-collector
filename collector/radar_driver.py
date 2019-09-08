@@ -71,8 +71,10 @@ def run_radar(eng):
     eng.start_frame(nargout=0)
     print("Radar started.")
     # time.sleep(40)
+
+    ts = time.time()
     eng.quit()
-    print('Stop matlab engine')
+    print('Stop matlab engine %s' % (time.time() - ts))
 
     return
 
