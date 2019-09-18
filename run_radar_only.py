@@ -34,7 +34,9 @@ def run_single_radar(seq_dir, radar=True, interval=True):
     print('Acquiring radar data...')
 
     with open(os.path.join(seq_dir, 'start_time_v.txt'), 'w') as start_time_txt:
-        start_time_txt.write("%s" % start_time)
+        time_str = datetime.datetime.fromtimestamp(start_time).strftime('%Y-%m-%d %H:%M:%S.%f')
+        start_time_txt.write("%s\n" % time_str)
+        # start_time_txt.write("%s" % start_time)
 
     return result
 
