@@ -17,7 +17,7 @@ from .radar_driver import init_radar
 from .radar_driver import check_datetime
 
 
-def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img, radar=True, interval=False):
+def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img, radar=True, interval=0):
     """
     This function acquires and saves 10 images from a device.
 
@@ -73,8 +73,8 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img,
             # Init radar
             engine = init_radar()
         
-        if radar and interval:
-            assert check_datetime(3) is True
+        if radar and interval != 0:
+            assert check_datetime(interval) is True
         
         if radar:
             # Run radar
@@ -224,7 +224,7 @@ def acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img,
     return result
 
 
-def run_single_camera(cam, seq_dir, frame_rate, num_img, radar=True):
+def run_single_camera(cam, seq_dir, frame_rate, num_img, radar=True, interval=0):
     """
     This function acts as the body of the example; please see NodeMapInfo example
     for more in-depth comments on setting up cameras.
@@ -259,7 +259,7 @@ def run_single_camera(cam, seq_dir, frame_rate, num_img, radar=True):
             return False
 
         # Acquire images and display chunk data
-        result &= acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img, radar)
+        result &= acquire_images(cam, nodemap, nodemap_tldevice, seq_dir, frame_rate, num_img, radar, interval)
 
         # Disable chunk data
         if disable_chunk_data(nodemap) is False:

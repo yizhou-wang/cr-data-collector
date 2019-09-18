@@ -20,7 +20,7 @@ from .radar_driver import init_radar
 from .radar_driver import check_datetime
 
 
-def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False):
+def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=0):
     """
     This function acquires and saves 10 images from each device.
 
@@ -83,8 +83,8 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
             # Init radar
             engine = init_radar()
         
-        if radar and interval:
-            assert check_datetime(1) is True
+        if radar and interval != 0:
+            assert check_datetime(interval) is True
 
         if radar:
             # Run radar
@@ -209,7 +209,7 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=False
     return result
 
 
-def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True):
+def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True, interval=0):
     """
     This function acts as the body of the example; please see NodeMapInfo example
     for more in-depth comments on setting up cameras.
@@ -270,7 +270,7 @@ def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True):
             return False
 
         # Acquire images on all cameras
-        result &= acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=True)
+        result &= acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval)
 
         # Deinitialize each camera
         #

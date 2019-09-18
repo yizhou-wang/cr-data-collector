@@ -8,6 +8,8 @@ from argparse import ArgumentParser
 from collector import run_single_camera, run_multiple_cameras, sort_cams
 from collector import copy_radar_data
 
+INTERVAL = 3
+
 
 def main(base_dir, seq_name, frame_rate, num_img, syn=False):
     """
@@ -60,7 +62,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
 
             print('Running example for camera %d...' % i)
 
-            result &= run_single_camera(cam, seq_dir, frame_rate, num_img)
+            result &= run_single_camera(cam, seq_dir, frame_rate, num_img, radar=True, interval=INTERVAL)
             print('Camera %d example complete... \n' % i)
 
         # Release reference to camera
@@ -81,7 +83,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
         # Run example on all cameras
         print('Running example for all cameras...')
 
-        result = run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True)
+        result = run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True, interval=INTERVAL)
 
     # Clear camera list before releasing system
     # cam_list.Clear()
