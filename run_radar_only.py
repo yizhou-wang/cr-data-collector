@@ -8,6 +8,7 @@ from collector import run_radar
 from collector import init_radar
 from collector import check_datetime
 
+INTERVAL = 3
 
 def run_single_radar(seq_dir, radar=True, interval=True):
     """
@@ -21,7 +22,7 @@ def run_single_radar(seq_dir, radar=True, interval=True):
         engine = init_radar()
     
     if radar and interval:
-        assert check_datetime(3) is True
+        assert check_datetime(INTERVAL) is True
     
     if radar:
         # Run radar
@@ -32,7 +33,7 @@ def run_single_radar(seq_dir, radar=True, interval=True):
     start_time = time.time()
     print('Acquiring radar data...')
 
-    with open(os.path.join(seq_dir, 'start_time.txt'), 'w') as start_time_txt:
+    with open(os.path.join(seq_dir, 'start_time_v.txt'), 'w') as start_time_txt:
         start_time_txt.write("%s" % start_time)
 
     return result

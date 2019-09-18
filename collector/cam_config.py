@@ -1,4 +1,7 @@
-import PySpin
+try:
+    import PySpin
+except:
+    print("Warning: PySpin is not installed!")
 
 
 serial_left_1   = '18384019'
