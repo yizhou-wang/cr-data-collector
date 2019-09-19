@@ -7,7 +7,7 @@ def Packet_reorder_zerofill(file_dir, file_out_name, file_name):
     if os.path.exists(log_dir) is False:
         os.makedirs(log_dir)
 
-    command = 'C:\\ti\\mmwave_studio_01_00_00_00\\mmWaveStudio\\PostProc\\Packet_Reorder_Zerofill.exe ' \
+    command = 'C:\\ti\\mmwave_studio_02_00_00_02\\mmWaveStudio\\PostProc\\Packet_Reorder_Zerofill.exe ' \
                 + file_dir + ' ' + file_out_name + ' ' + log_dir + '\\log.txt'
     os.system(command)
     
