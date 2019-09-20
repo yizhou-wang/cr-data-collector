@@ -1,6 +1,8 @@
 import os
 import datetime
 
+store_dir = 'Z:\\'
+
 def Packet_reorder_zerofill(file_dir, file_out_name, file_name):
 
     log_dir = 'D:\\tmp\\radar_pp\\' + file_name
@@ -25,7 +27,7 @@ def reorder_zerofill_for_seq(folder_dir, seq):
         file_out_name = os.path.join(folder_out_dir, 'adc_data_' + index + '.bin')
         file_reo_zef = Packet_reorder_zerofill(file_dir, file_out_name, seq)
 
-def reorder_zerofill_for_date(date, data_dir='D:\\RawData'):
+def reorder_zerofill_for_date(date, data_dir=store_dir):
 
     base_dir = os.path.join(data_dir, date)
 
