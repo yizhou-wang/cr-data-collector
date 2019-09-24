@@ -5,31 +5,31 @@ This is a repository for Camera/Radar data collection tools, including operating
 1. Install Anaconda and MATLAB.
 2. Clone this repository to your local laptop.
 3. Setup Python environment in Anaconda Prompt:
-```
-cd cr-data-collector
-conda create --name datacol --file requirements.txt
-```
+    ```
+    cd cr-data-collector
+    conda create --name datacol --file requirements.txt
+    ```
 4. Download Spinnaker Python SDK
     1) Download Spinnaker Python SDK: https://www.flir.com/products/spinnaker-sdk/
     2) DOWNLOAD NOW => DOWNLOAD FROM BOX => Windows => Latest Python Spinnaker => 
     x86: `spinnaker_python-1.23.0.27-cp36-cp36m-win32.zip` / x64: `spinnaker_python-1.23.0.27-cp36-cp36m-win_amd64.zip`
 5. Activate conda env:
-```
-activate datacol
-```
+    ```
+    activate datacol
+    ```
 6. Unzip downloaded Python SDK and follow `README.txt` "1.1 Installation for Windows". 
 7. Install MATLAB Engine API for Python by following the instruction: https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html
 
 
 ## Run data collector
 1. Activate conda env:
-```
-activate datacol
-```
+    ```
+    activate datacol
+    ```
 2. Run script:
-```
-python run_datacol.py
-```
+    ```
+    python run_datacol.py
+    ```
 3. Set configurations:
 
     There are several configurations need to be set as follows. If you input nothing, it will use the default values.
@@ -70,12 +70,20 @@ Follow the instructions to install drivers and run camera.
 ### Steps for camera calibration:
 - Refer to http://wiki.ros.org/camera_calibration for the details first.
 - Start ROS server: 
-```roscore```
+    ```
+    roscore
+    ```
 - Start camera acquisition: 
-```roslaunch spinnaker_camera_driver camera.launch```
+    ```
+    roslaunch spinnaker_camera_driver camera.launch
+    ```
 - Run camera calibration:
-```rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.033 image:=/camera/image_raw camera:=/camera```
+    ```
+    rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.033 image:=/camera/image_raw camera:=/camera
+    ```
 - Move camera around the checkerboard to collect enough images and click "Calibrate" button.
 - After calibration finished, click "Save" button.
 - Copy calibration results to a desired destination: 
-```cp /tmp/calibrationdata.tar.gz /mnt/nas_crdataset/```
+    ```
+    cp /tmp/calibrationdata.tar.gz /mnt/nas_crdataset/
+    ```
