@@ -57,3 +57,25 @@ python run_datacol.py
     ......
     ```
 4. When all the configurations are set, press enter to start recording.
+
+## Camera Calibration
+
+We use [ROS](https://www.ros.org/) to calibrate our camera(s). 
+
+ROS Kinetic installation instructions can be found here: http://wiki.ros.org/kinetic/Installation.
+
+After install ROS, download Spinnaker SDK for our BlackFly S Cameras: http://wiki.ros.org/spinnaker_sdk_camera_driver.
+Follow the instructions to install drivers and run camera. 
+
+### Steps for camera calibration:
+- Refer to http://wiki.ros.org/camera_calibration for the details first.
+- Start ROS server: 
+```roscore```
+- Start camera acquisition: 
+```roslaunch spinnaker_camera_driver camera.launch```
+- Run camera calibration:
+```rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.033 image:=/camera/image_raw camera:=/camera```
+- Move camera around the checkerboard to collect enough images and click "Calibrate" button.
+- After calibration finished, click "Save" button.
+- Copy calibration results to a desired destination: 
+```cp /tmp/calibrationdata.tar.gz /mnt/nas_crdataset/```
