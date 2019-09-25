@@ -9,7 +9,6 @@ import time
 import datetime
 import numpy as np
 
-
 from .cam_config import ChunkDataTypes, CHOSEN_CHUNK_DATA_TYPE
 from .cam_config import configure_chunk_data, disable_chunk_data, \
     display_chunk_data_from_image, display_chunk_data_from_nodemap
@@ -266,7 +265,7 @@ def run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True, int
             if configure_buffer(s_node_map) is False:
                 return False
 
-        if configure_trigger_multi(cam_list) is False:
+        if configure_trigger_multi(cam_list, sync=True) is False:
             return False
 
         # Acquire images on all cameras

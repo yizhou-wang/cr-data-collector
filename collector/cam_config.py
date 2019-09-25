@@ -18,6 +18,7 @@ class ChunkDataTypes:
 class TriggerType:
     SOFTWARE = 1
     HARDWARE = 2
+    HARDWARE_SEC = 3
 
 
 CHOSEN_CHUNK_DATA_TYPE = ChunkDataTypes.NODEMAP
@@ -436,7 +437,7 @@ def configure_buffer(s_node_map):
     return result
 
 
-def configure_trigger(nodemap):
+def configure_trigger(nodemap, trigger_type=TriggerType.SOFTWARE):
     try:
         result = True
         # Set trigger mode to Off
@@ -452,6 +453,49 @@ def configure_trigger(nodemap):
         node_trigger_mode.SetIntValue(trigger_mode_off)
         print('Trigger mode set to off...')
 
+        # Select trigger source
+        # The trigger source must be set to hardware or software while trigger
+        # mode is off.
+        node_trigger_source = PySpin.CEnumerationPtr(nodemap.GetNode('TriggerSource'))
+        if not PySpin.IsAvailable(node_trigger_source) or not PySpin.IsWritable(node_trigger_source):
+            print('Unable to get trigger source (node retrieval). Aborting...')
+            return False
+
+        if trigger_type == TriggerType.SOFTWARE:
+            node_trigger_source_software = node_trigger_source.GetEntryByName('Software')
+            if not PySpin.IsAvailable(node_trigger_source_software) or not PySpin.IsReadable(
+                    node_trigger_source_software):
+                print('Unable to set trigger source (enum entry retrieval). Aborting...')
+                return False
+            node_trigger_source.SetIntValue(node_trigger_source_software.GetValue())
+
+        elif trigger_type == TriggerType.HARDWARE:
+            node_trigger_source_hardware = node_trigger_source.GetEntryByName('Line0')
+            if not PySpin.IsAvailable(node_trigger_source_hardware) or not PySpin.IsReadable(
+                    node_trigger_source_hardware):
+                print('Unable to set trigger source (enum entry retrieval). Aborting...')
+                return False
+            node_trigger_source.SetIntValue(node_trigger_source_hardware.GetValue())
+
+        elif trigger_type == TriggerType.HARDWARE_SEC:
+            node_trigger_source_hardware = node_trigger_source.GetEntryByName('Line3')
+            if not PySpin.IsAvailable(node_trigger_source_hardware) or not PySpin.IsReadable(
+                    node_trigger_source_hardware):
+                print('Unable to set trigger source (enum entry retrieval). Aborting...')
+                return False
+            node_trigger_source.SetIntValue(node_trigger_source_hardware.GetValue())
+
+        # Turn trigger mode on
+        # Once the appropriate trigger source has been set, turn trigger mode
+        # on in order to retrieve images using the trigger.
+        node_trigger_mode_on = node_trigger_mode.GetEntryByName('On')
+        if not PySpin.IsAvailable(node_trigger_mode_on) or not PySpin.IsReadable(node_trigger_mode_on):
+            print('Unable to enable trigger mode (enum entry retrieval). Aborting...')
+            return False
+
+        node_trigger_mode.SetIntValue(node_trigger_mode_on.GetValue())
+        print('Trigger mode turned back on...')
+
     except:
         result = False
 
@@ -462,57 +506,10 @@ def configure_trigger_multi(cam_list, sync=False):
     try:
         result = True
         if sync:
-            for cam in cam_list:
-                nodemap = cam.GetNodeMap()
-                node_trigger_mode = PySpin.CEnumerationPtr(nodemap.GetNode('TriggerMode'))
-                if not PySpin.IsAvailable(node_trigger_mode) or not PySpin.IsReadable(node_trigger_mode):
-                    print('Unable to disable trigger mode (node retrieval). Aborting...')
-                    return False
-
-                node_trigger_mode_off = node_trigger_mode.GetEntryByName('Off')
-                if not PySpin.IsAvailable(node_trigger_mode_off) or not PySpin.IsReadable(node_trigger_mode_off):
-                    print('Unable to disable trigger mode (enum entry retrieval). Aborting...')
-                    return False
-
-                node_trigger_mode.SetIntValue(node_trigger_mode_off.GetValue())
-
-                print('Trigger mode disabled...')
-
-                # Select trigger source
-                # The trigger source must be set to hardware or software while trigger
-                # mode is off.
-                node_trigger_source = PySpin.CEnumerationPtr(nodemap.GetNode('TriggerSource'))
-                if not PySpin.IsAvailable(node_trigger_source) or not PySpin.IsWritable(node_trigger_source):
-                    print('Unable to get trigger source (node retrieval). Aborting...')
-                    return False
-
-                if CHOSEN_TRIGGER == TriggerType.SOFTWARE:
-                    node_trigger_source_software = node_trigger_source.GetEntryByName('Software')
-                    if not PySpin.IsAvailable(node_trigger_source_software) or not PySpin.IsReadable(
-                            node_trigger_source_software):
-                        print('Unable to set trigger source (enum entry retrieval). Aborting...')
-                        return False
-                    node_trigger_source.SetIntValue(node_trigger_source_software.GetValue())
-
-                elif CHOSEN_TRIGGER == TriggerType.HARDWARE:
-                    node_trigger_source_hardware = node_trigger_source.GetEntryByName('Line0')
-                    if not PySpin.IsAvailable(node_trigger_source_hardware) or not PySpin.IsReadable(
-                            node_trigger_source_hardware):
-                        print('Unable to set trigger source (enum entry retrieval). Aborting...')
-                        return False
-                    node_trigger_source.SetIntValue(node_trigger_source_hardware.GetValue())
-
-                # Turn trigger mode on
-                # Once the appropriate trigger source has been set, turn trigger mode
-                # on in order to retrieve images using the trigger.
-                node_trigger_mode_on = node_trigger_mode.GetEntryByName('On')
-                if not PySpin.IsAvailable(node_trigger_mode_on) or not PySpin.IsReadable(node_trigger_mode_on):
-                    print('Unable to enable trigger mode (enum entry retrieval). Aborting...')
-                    return False
-
-                node_trigger_mode.SetIntValue(node_trigger_mode_on.GetValue())
-                print('Trigger mode turned back on...')
-
+            cam_1 = cam_list.GetBySerial(serial_left_1)
+            cam_2 = cam_list.GetBySerial(serial_right_1)
+            configure_trigger(cam_1.GetNodeMap(), trigger_type=TriggerType.SOFTWARE)            
+            configure_trigger(cam_2.GetNodeMap(), trigger_type=TriggerType.HARDWARE_SEC)
 
         else:
             for cam in cam_list:
