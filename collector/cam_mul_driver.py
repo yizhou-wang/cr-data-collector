@@ -96,10 +96,10 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=0):
 
         for i, cam in enumerate(cam_list):
             # Begin acquiring images
-            ts_tmp = time.time()
+            # ts_tmp = time.time()
             cam.BeginAcquisition()
             start_time_cam.append(time.time())
-            print('begin acq %s' % (time.time() - ts_tmp))
+            # print('begin acq %s' % (time.time() - ts_tmp))
             print('Camera %d started acquiring images...' % i)
 
         for i, cam in enumerate(cam_list):
