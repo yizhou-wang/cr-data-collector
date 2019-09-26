@@ -16,6 +16,7 @@ class ChunkDataTypes:
 
 
 class TriggerType:
+    NULL = 0
     SOFTWARE = 1
     HARDWARE = 2
     HARDWARE_SEC = 3
@@ -461,6 +462,8 @@ def configure_trigger(nodemap, trigger_type=TriggerType.SOFTWARE):
             print('Unable to get trigger source (node retrieval). Aborting...')
             return False
 
+        if trigger_type == TriggerType.NULL:
+            pass
         if trigger_type == TriggerType.SOFTWARE:
             node_trigger_source_software = node_trigger_source.GetEntryByName('Software')
             if not PySpin.IsAvailable(node_trigger_source_software) or not PySpin.IsReadable(
@@ -485,16 +488,17 @@ def configure_trigger(nodemap, trigger_type=TriggerType.SOFTWARE):
                 return False
             node_trigger_source.SetIntValue(node_trigger_source_hardware.GetValue())
 
-        # Turn trigger mode on
-        # Once the appropriate trigger source has been set, turn trigger mode
-        # on in order to retrieve images using the trigger.
-        node_trigger_mode_on = node_trigger_mode.GetEntryByName('On')
-        if not PySpin.IsAvailable(node_trigger_mode_on) or not PySpin.IsReadable(node_trigger_mode_on):
-            print('Unable to enable trigger mode (enum entry retrieval). Aborting...')
-            return False
+        if trigger_type != TriggerType.NULL:
+            # Turn trigger mode on
+            # Once the appropriate trigger source has been set, turn trigger mode
+            # on in order to retrieve images using the trigger.
+            node_trigger_mode_on = node_trigger_mode.GetEntryByName('On')
+            if not PySpin.IsAvailable(node_trigger_mode_on) or not PySpin.IsReadable(node_trigger_mode_on):
+                print('Unable to enable trigger mode (enum entry retrieval). Aborting...')
+                return False
 
-        node_trigger_mode.SetIntValue(node_trigger_mode_on.GetValue())
-        print('Trigger mode turned back on...')
+            node_trigger_mode.SetIntValue(node_trigger_mode_on.GetValue())
+            print('Trigger mode turned back on...')
 
     except:
         result = False
@@ -506,9 +510,11 @@ def configure_trigger_multi(cam_list, sync=False):
     try:
         result = True
         if sync:
-            cam_1 = cam_list.GetBySerial(serial_left_1)
-            cam_2 = cam_list.GetBySerial(serial_right_1)
-            configure_trigger(cam_1.GetNodeMap(), trigger_type=TriggerType.SOFTWARE)            
+            # cam_1 = cam_list.GetBySerial(serial_left_1)
+            # cam_2 = cam_list.GetBySerial(serial_right_1)
+            cam_1 = cam_list[0]
+            cam_2 = cam_list[1]
+            configure_trigger(cam_1.GetNodeMap(), trigger_type=TriggerType.NULL)
             configure_trigger(cam_2.GetNodeMap(), trigger_type=TriggerType.HARDWARE_SEC)
 
         else:
@@ -517,5 +523,49 @@ def configure_trigger_multi(cam_list, sync=False):
                 configure_trigger(nodemap)
     except:
         result = False
+
+    return result
+
+
+def grab_next_image_by_trigger(nodemap, trigger_type=TriggerType.SOFTWARE):
+    """
+    This function acquires an image by executing the trigger node.
+
+    :param cam: Camera to acquire images from.
+    :param nodemap: Device nodemap.
+    :type cam: CameraPtr
+    :type nodemap: INodeMap
+    :return: True if successful, False otherwise.
+    :rtype: bool
+    """
+    try:
+        result = True
+        # Use trigger to capture image
+        # The software trigger only feigns being executed by the Enter key;
+        # what might not be immediately apparent is that there is not a
+        # continuous stream of images being captured; in other examples that
+        # acquire images, the camera captures a continuous stream of images.
+        # When an image is retrieved, it is plucked from the stream.
+
+        if trigger_type == TriggerType.SOFTWARE:
+            # Execute software trigger
+            node_softwaretrigger_cmd = PySpin.CCommandPtr(nodemap.GetNode('TriggerSoftware'))
+            if not PySpin.IsAvailable(node_softwaretrigger_cmd) or not PySpin.IsWritable(node_softwaretrigger_cmd):
+                print('Unable to execute trigger. Aborting...')
+                return False
+
+            # Get user input
+            input('Press the Enter key to initiate software trigger.')
+
+            node_softwaretrigger_cmd.Execute()
+
+            # TODO: Blackfly and Flea3 GEV cameras need 2 second delay after software trigger
+
+        elif trigger_type == TriggerType.HARDWARE:
+            print('Use the hardware to trigger image acquisition.')
+
+    except PySpin.SpinnakerException as ex:
+        print('Error: %s' % ex)
+        return False
 
     return result
