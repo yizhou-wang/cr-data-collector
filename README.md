@@ -67,7 +67,7 @@ ROS Kinetic installation instructions can be found here: http://wiki.ros.org/kin
 After install ROS, download Spinnaker SDK for our BlackFly S Cameras: http://wiki.ros.org/spinnaker_sdk_camera_driver.
 Follow the instructions to install drivers and run camera. 
 
-### Steps for camera calibration:
+### Steps for monocular camera calibration
 - Refer to http://wiki.ros.org/camera_calibration for the details first.
 - Start ROS server: 
     ```
@@ -79,7 +79,32 @@ Follow the instructions to install drivers and run camera.
     ```
 - Run camera calibration:
     ```
-    rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.033 image:=/camera/image_raw camera:=/camera
+    rosrun camera_calibration cameracalibrator.py --size 8x6 \\
+        --square 0.033 image:=/camera/image_raw camera:=/camera
+    ```
+- Move camera around the checkerboard to collect enough images and click "Calibrate" button.
+- After calibration finished, click "Save" button.
+- Copy calibration results to a desired destination: 
+    ```
+    cp /tmp/calibrationdata.tar.gz /mnt/nas_crdataset/
+    ```
+
+### Steps for stereo camera calibration
+- Refer to http://wiki.ros.org/camera_calibration/Tutorials/StereoCalibration for the details first.
+- Start ROS server: 
+    ```
+    roscore
+    ```
+- Start camera acquisition: 
+    ```
+    roslaunch spinnaker_camera_driver stereo.launch
+    ```
+- Run camera calibration:
+    ```
+    rosrun camera_calibration cameracalibrator.py --approximate 0.1 \\ 
+        --size 8x6 --square 0.033 right:=/stereo/right/image_raw \\
+        left:=/stereo/left/image_raw right_camera:=/stereo/right \\
+        left_camera:=/stereo/left
     ```
 - Move camera around the checkerboard to collect enough images and click "Calibrate" button.
 - After calibration finished, click "Save" button.
