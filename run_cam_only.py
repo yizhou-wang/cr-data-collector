@@ -182,8 +182,9 @@ if __name__ == '__main__':
         else:
             os.makedirs(data_dir)
 
-    # for name in args.sequence_name:
-    #     data_dir = os.path.join(args.base_dir, name)
+    for name in args.sequence_name:
+        time_global = time.time()
+        data_dir = os.path.join(args.base_dir, name)
 
     #     if not os.path.exists(os.path.join(data_dir, 'images')):
     #         os.makedirs(os.path.join(data_dir, 'images'))
@@ -194,3 +195,5 @@ if __name__ == '__main__':
 
         print('Waiting for data processing ...')
         time.sleep(1)
+
+        print("Time consumption: %s" % (time.time() - time_global))

@@ -200,8 +200,8 @@ if __name__ == '__main__':
         else:
             os.makedirs(data_dir)
 
-    # for name in args.sequence_name:
-    #     data_dir = os.path.join(args.base_dir, name)
+    for name in args.sequence_name:
+        data_dir = os.path.join(args.base_dir, name)
 
     #     if not os.path.exists(os.path.join(data_dir, 'images')):
     #         os.makedirs(os.path.join(data_dir, 'images'))
