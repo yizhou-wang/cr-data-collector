@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 from collector import run_single_camera, run_multiple_cameras, sort_cams
 
 
-def main(base_dir, seq_name, frame_rate, num_img, syn=False):
+def main(base_dir, seq_name, frame_rate, num_img, syn=True):
     """
     Example entry point; please see Enumeration example for more in-depth
     comments on preparing and cleaning up the system.
@@ -46,7 +46,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
         input('Done! Press Enter to exit...')
         return False
 
-    if syn or num_cameras == 1:
+    if not syn or num_cameras == 1:
         # Run example on each camera
         for i, cam in enumerate(cam_list):
 
@@ -61,7 +61,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
             print('Camera %d example complete... \n' % i)
 
     else:
-
+        print("***** Runnng under syn mode...")
         for i in range(num_cameras):
 
             if not os.path.exists(os.path.join(seq_dir, 'images_%d' % i)):
