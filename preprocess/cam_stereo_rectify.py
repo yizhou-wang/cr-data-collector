@@ -40,10 +40,10 @@ def rectify_for_seq(folder_dir_l, folder_dir_r, calib_yaml_l, calib_yaml_r):
 
     im_names_l = sorted(os.listdir(folder_dir_l))
     w_l, h_l, K_l, D_l, R_l, P_l = load_calib(calib_yaml_l)
-    folder_out_dir_l = folder_dir_l.replace('images', 'images_udst')
+    folder_out_dir_l = folder_dir_l.replace('images', 'images_rect')
     im_names_r = sorted(os.listdir(folder_dir_r))
     w_r, h_r, K_r, D_r, R_r, P_r = load_calib(calib_yaml_r)
-    folder_out_dir_r = folder_dir_r.replace('images', 'images_udst')
+    folder_out_dir_r = folder_dir_r.replace('images', 'images_rect')
 
     assert len(im_names_l) == len(im_names_r)
     assert w_l == w_r
@@ -73,7 +73,7 @@ def rectify_for_seq(folder_dir_l, folder_dir_r, calib_yaml_l, calib_yaml_r):
         cv2.imwrite(im_out_name_r, dstR)
 
 
-def undistort_for_date(date, data_dir='D:\\RawData'):
+def rectify_for_date(date, data_dir='D:\\RawData'):
 
     base_dir = os.path.join(data_dir, date)
 
@@ -110,4 +110,4 @@ if __name__ == '__main__':
         now = datetime.datetime.now()
         date = "%s_%02d_%02d" % (now.year, now.month, now.day)
 
-    undistort_for_date(date, data_dir=data_root)
+    rectify_for_date(date, data_dir=data_root)
