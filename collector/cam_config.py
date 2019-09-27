@@ -488,6 +488,15 @@ def configure_trigger(nodemap, trigger_type=TriggerType.SOFTWARE):
                 return False
             node_trigger_source.SetIntValue(node_trigger_source_hardware.GetValue())
 
+            # set secondary TriggerOverlap to ReadOut
+            node_trigger_overlap = PySpin.CEnumerationPtr(nodemap.GetNode('TriggerOverlap'))
+            node_trigger_overlap_readout = node_trigger_overlap.GetEntryByName('ReadOut')
+            if not PySpin.IsAvailable(node_trigger_overlap_readout) or not PySpin.IsReadable(
+                    node_trigger_overlap_readout):
+                print('Unable to set trigger source (enum entry retrieval). Aborting...')
+                return False
+            node_trigger_overlap.SetIntValue(node_trigger_overlap_readout.GetValue())
+
         if trigger_type != TriggerType.NULL:
             # Turn trigger mode on
             # Once the appropriate trigger source has been set, turn trigger mode

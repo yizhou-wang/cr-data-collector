@@ -33,67 +33,23 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=0):
     try:
         result = True
         timestamp_txt = []
-        start_time_cam = []
 
-        # # Prepare each camera to acquire images
-        # for i, cam in enumerate(cam_list):
-        #
-        #     # Set acquisition mode to continuous
-        #     node_acquisition_mode = PySpin.CEnumerationPtr(cam.GetNodeMap().GetNode('AcquisitionMode'))
-        #     if not PySpin.IsAvailable(node_acquisition_mode) or not PySpin.IsWritable(node_acquisition_mode):
-        #         print('Unable to set acquisition mode to continuous (node retrieval; camera %d). Aborting... \n' % i)
-        #         return False
-        #
-        #     node_acquisition_mode_continuous = node_acquisition_mode.GetEntryByName('Continuous')
-        #     if not PySpin.IsAvailable(node_acquisition_mode_continuous) or not PySpin.IsReadable(
-        #             node_acquisition_mode_continuous):
-        #         print('Unable to set acquisition mode to continuous (entry \'continuous\' retrieval %d). \
-        #         Aborting... \n' % i)
-        #         return False
-        #     acquisition_mode_continuous = node_acquisition_mode_continuous.GetValue()
-        #     node_acquisition_mode.SetIntValue(acquisition_mode_continuous)
-        #     print('Camera %d acquisition mode set to continuous...' % i)
-        #
-        #     ####################
-        #     # Framerate
-        #     ####################
-        #     # Set acquisition frame rate enable to true
-        #     acquisition_frame_rate_active = PySpin.CBooleanPtr(cam.GetNodeMap().GetNode('AcquisitionFrameRateEnable'))
-        #     if PySpin.IsAvailable(acquisition_frame_rate_active) and PySpin.IsWritable(acquisition_frame_rate_active):
-        #         acquisition_frame_rate_active.SetValue(True)
-        #     print('Camera %d acquisition frame rate activated...' % i)
-        #
-        #     # Set frame rate to the given value
-        #     node_acquisition_frame_rate = PySpin.CFloatPtr(cam.GetNodeMap().GetNode('AcquisitionFrameRate'))
-        #     if not PySpin.IsAvailable(node_acquisition_frame_rate) or not PySpin.IsWritable(
-        #             node_acquisition_frame_rate):
-        #         print('Unable to set frame rate (node retrieval). Aborting...')
-        #         return False
-        #     node_acquisition_frame_rate.SetValue(frame_rate)
-        #     print('Camera %d acquisition frame rate set to %d...\n' % (i, frame_rate))
-        #
-        #     f = open(os.path.join(seq_dir, 'timestamps_%d.txt' % i), 'w')
-        #     timestamp_txt.append(f)
-
+        # set config for primary camera
         cam = cam_list[0]
-        i = 0
-
         # Set acquisition mode to continuous
         node_acquisition_mode = PySpin.CEnumerationPtr(cam.GetNodeMap().GetNode('AcquisitionMode'))
         if not PySpin.IsAvailable(node_acquisition_mode) or not PySpin.IsWritable(node_acquisition_mode):
-            print('Unable to set acquisition mode to continuous (node retrieval; camera %d). Aborting... \n' % i)
+            print('Unable to set acquisition mode to continuous (node retrieval). Aborting... \n')
             return False
-
         node_acquisition_mode_continuous = node_acquisition_mode.GetEntryByName('Continuous')
         if not PySpin.IsAvailable(node_acquisition_mode_continuous) or not PySpin.IsReadable(
                 node_acquisition_mode_continuous):
-            print('Unable to set acquisition mode to continuous (entry \'continuous\' retrieval %d). \
-            Aborting... \n' % i)
+            print('Unable to set acquisition mode to continuous (entry \'continuous\' retrieval). \
+            Aborting... \n')
             return False
         acquisition_mode_continuous = node_acquisition_mode_continuous.GetValue()
         node_acquisition_mode.SetIntValue(acquisition_mode_continuous)
-        print('Camera %d acquisition mode set to continuous...' % i)
-
+        print('Camera acquisition mode set to continuous...')
         ####################
         # Framerate
         ####################
@@ -101,8 +57,7 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=0):
         acquisition_frame_rate_active = PySpin.CBooleanPtr(cam.GetNodeMap().GetNode('AcquisitionFrameRateEnable'))
         if PySpin.IsAvailable(acquisition_frame_rate_active) and PySpin.IsWritable(acquisition_frame_rate_active):
             acquisition_frame_rate_active.SetValue(True)
-        print('Camera %d acquisition frame rate activated...' % i)
-
+        print('Camera acquisition frame rate activated...')
         # Set frame rate to the given value
         node_acquisition_frame_rate = PySpin.CFloatPtr(cam.GetNodeMap().GetNode('AcquisitionFrameRate'))
         if not PySpin.IsAvailable(node_acquisition_frame_rate) or not PySpin.IsWritable(
@@ -110,22 +65,17 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=0):
             print('Unable to set frame rate (node retrieval). Aborting...')
             return False
         node_acquisition_frame_rate.SetValue(frame_rate)
-        print('Camera %d acquisition frame rate set to %d...\n' % (i, frame_rate))
+        print('Camera acquisition frame rate set to %d...\n' % frame_rate)
 
         for i in range(2):
             f = open(os.path.join(seq_dir, 'timestamps_%d.txt' % i), 'w')
             timestamp_txt.append(f)
 
-        # pause
-        # input("Initialization finished! Press Enter to continue ...")
-
         if radar:
             # Init radar
             engine = init_radar()
-        
         if radar and interval != 0:
             assert check_datetime(interval) is True
-
         if radar:
             # Run radar
             run_radar(engine)
@@ -144,8 +94,9 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=0):
 
         cam_list[1].BeginAcquisition()
         cam_list[0].BeginAcquisition()
-        # if not grab_next_image_by_trigger(cam_list[0].GetNodeMap()):
-        #     return False
+        # record start time
+        start_time_cam = time.time()
+
         print('Camera started acquiring images...')
 
         for i, cam in enumerate(cam_list):
@@ -226,10 +177,13 @@ def acquire_images(cam_list, seq_dir, frame_rate, num_img, radar, interval=0):
         with open(os.path.join(seq_dir, 'start_time.txt'), 'w') as start_time_txt:
             time_str = datetime.datetime.fromtimestamp(start_time).strftime('%Y-%m-%d %H:%M:%S.%f')
             start_time_txt.write("%s\n" % time_str)
-            for cam_st in start_time_cam:
-                time_str = datetime.datetime.fromtimestamp(cam_st).strftime('%Y-%m-%d %H:%M:%S.%f')
-                start_time_txt.write("%s\n" % time_str)
+            # for cam_st in start_time_cam:
+            #     time_str = datetime.datetime.fromtimestamp(cam_st).strftime('%Y-%m-%d %H:%M:%S.%f')
+            #     start_time_txt.write("%s\n" % time_str)
+            time_str = datetime.datetime.fromtimestamp(start_time_cam).strftime('%Y-%m-%d %H:%M:%S.%f')
+            start_time_txt.write("%s\n" % time_str)
             start_time_txt.write("\n")
+            
             for ff in FIRST_TS_list:
                 start_time_txt.write("%d\n" % ff)
                 
