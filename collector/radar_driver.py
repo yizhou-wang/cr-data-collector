@@ -65,6 +65,12 @@ def run_radar(eng):
     
     while True:
        new_datetime = datetime.datetime.now().second
+       if new_datetime == cur_datetime + 4:
+            break
+
+    eng.conf_start_record(nargout=0)
+    while True:
+       new_datetime = datetime.datetime.now().second
        if new_datetime == cur_datetime + 5:
             break
 
@@ -75,7 +81,6 @@ def run_radar(eng):
     ts = time.time()
     eng.quit()
     print('Stop matlab engine %s' % (time.time() - ts))
-
     return
 
 
@@ -106,6 +111,11 @@ def copy_radar_data(base_dir, seq_name, vertical):
                     shutil.copyfile(old_path, new_path)
                     n_files += 1
             else:
+                try:
+                    raise ValueError
+                except ValueError:
+                    print("ValueError Exception!")
+                
                 print("Error!!! The size of data file is less than 1000kB, \
                     possiblely there is no radar data!!")
                 print("Please recapture this sequence and overwrite it")
