@@ -8,9 +8,8 @@ from collector import run_radar
 from collector import init_radar
 from collector import check_datetime
 
-INTERVAL = 3
 
-def run_single_radar(seq_dir, radar=True, interval=True):
+def run_single_radar(seq_dir, radar=True, interval=0):
     """
     This function is to run the other radar on different laptop
     with interval checking and copy raw radar data
@@ -22,7 +21,7 @@ def run_single_radar(seq_dir, radar=True, interval=True):
         engine = init_radar()
     
     if radar and interval:
-        assert check_datetime(INTERVAL) is True
+        assert check_datetime(interval) is True
     
     if radar:
         # Run radar
@@ -41,8 +40,7 @@ def run_single_radar(seq_dir, radar=True, interval=True):
     return result
 
 
-
-def main(base_dir, seq_name, frame_rate, num_img, syn=True):
+def main(base_dir, seq_name, frame_rate, num_img, syn=True, interval=0):
     """
     Example entry point; please see Enumeration example for more in-depth
     comments on preparing and cleaning up the system.
@@ -57,7 +55,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=True):
     if not os.path.exists(os.path.join(seq_dir, 'radar_v')):
         os.makedirs(os.path.join(seq_dir, 'radar_v'))
 
-    result &= run_single_radar(seq_dir)
+    result &= run_single_radar(seq_dir, interval=interval)
     print('Radar %d example complete... \n' % 1)
    
     # move radar data files to right place
@@ -76,6 +74,7 @@ if __name__ == '__main__':
     parser.add_argument('-fr', '--framerate', dest='frame_rate', help='set acquisition framerate')
     parser.add_argument('-n', '--numimg', dest='number_of_images', help='set acquisition image number')
     parser.add_argument('-ns', '--numseq', dest='number_of_seqs', help='set acquisition sequence number')
+    parser.add_argument('-i', '--interval', dest='interval', help='set time interval')
     args = parser.parse_args()
 
     now = datetime.datetime.now()
@@ -138,12 +137,22 @@ if __name__ == '__main__':
             args.number_of_images = input("Enter number of images (default=30): ")
             try_remain -= 1
 
+    try_remain = 1
+    while args.interval is None or args.interval == '':
+        if try_remain == 0:
+            args.interval = 3
+            break
+        else:
+            args.interval = input("Enter interval (default=3): ")
+            try_remain -= 1
+
     print('Input configurations:')
     print('\tBase Directory:\t\t', args.base_dir)
     print('\tSequence Number:\t', args.number_of_seqs)
     print('\tSequence Name:\t\t', args.sequence_name)
     print('\tFramerate:\t\t', args.frame_rate)
     print('\tImage Number:\t\t', args.number_of_images)
+    print('\tInterval:\t\t', args.interval)
     print('')
 
     check_config = input("Are the above configurations correct? (y/n) ")
@@ -173,7 +182,7 @@ if __name__ == '__main__':
         # if not os.path.exists(os.path.join(data_dir, 'radar_v')):
         #     os.makedirs(os.path.join(data_dir, 'radar_v'))
 
-        main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)))
+        main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)), interval=int(float(args.interval)))
 
         print('Waiting for data processing ...')
         time.sleep(1)

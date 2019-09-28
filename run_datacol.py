@@ -8,10 +8,8 @@ from argparse import ArgumentParser
 from collector import run_single_camera, run_multiple_cameras, sort_cams
 from collector import copy_radar_data
 
-INTERVAL = 3
 
-
-def main(base_dir, seq_name, frame_rate, num_img, syn=False):
+def main(base_dir, seq_name, frame_rate, num_img, syn=False, interval=0):
     """
     Example entry point; please see Enumeration example for more in-depth
     comments on preparing and cleaning up the system.
@@ -62,7 +60,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
 
             print('Running example for camera %d...' % i)
 
-            result &= run_single_camera(cam, seq_dir, frame_rate, num_img, radar=True, interval=INTERVAL)
+            result &= run_single_camera(cam, seq_dir, frame_rate, num_img, radar=True, interval=interval)
             print('Camera %d example complete... \n' % i)
 
         # Release reference to camera
@@ -83,7 +81,7 @@ def main(base_dir, seq_name, frame_rate, num_img, syn=False):
         # Run example on all cameras
         print('Running example for all cameras...')
 
-        result = run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True, interval=INTERVAL)
+        result = run_multiple_cameras(cam_list, seq_dir, frame_rate, num_img, radar=True, interval=interval)
 
     # Clear camera list before releasing system
     # cam_list.Clear()
@@ -109,6 +107,7 @@ if __name__ == '__main__':
     parser.add_argument('-fr', '--framerate', dest='frame_rate', help='set acquisition framerate')
     parser.add_argument('-n', '--numimg', dest='number_of_images', help='set acquisition image number')
     parser.add_argument('-ns', '--numseq', dest='number_of_seqs', help='set acquisition sequence number')
+    parser.add_argument('-i', '--interval', dest='interval', help='set time interval')
     args = parser.parse_args()
 
     now = datetime.datetime.now()
@@ -171,12 +170,22 @@ if __name__ == '__main__':
             args.number_of_images = input("Enter number of images (default=30): ")
             try_remain -= 1
 
+    try_remain = 1
+    while args.interval is None or args.interval == '':
+        if try_remain == 0:
+            args.interval = 3
+            break
+        else:
+            args.interval = input("Enter interval (default=3): ")
+            try_remain -= 1
+
     print('Input configurations:')
     print('\tBase Directory:\t\t', args.base_dir)
     print('\tSequence Number:\t', args.number_of_seqs)
     print('\tSequence Name:\t\t', args.sequence_name)
     print('\tFramerate:\t\t', args.frame_rate)
     print('\tImage Number:\t\t', args.number_of_images)
+    print('\tInterval:\t\t', args.interval)
     print('')
 
     check_config = input("Are the above configurations correct? (y/n) ")
@@ -208,7 +217,7 @@ if __name__ == '__main__':
     #     if not os.path.exists(os.path.join(data_dir, 'radar_h')):
     #         os.makedirs(os.path.join(data_dir, 'radar_h'))
 
-        main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)))
+        main(args.base_dir, name, float(args.frame_rate), int(float(args.number_of_images)), interval=int(float(args.interval)))
 
         print('Waiting for data processing ...')
         time.sleep(1)
