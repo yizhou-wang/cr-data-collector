@@ -65,12 +65,6 @@ def run_radar(eng):
     
     while True:
        new_datetime = datetime.datetime.now().second
-       if new_datetime == cur_datetime + 4:
-            break
-
-    eng.conf_start_record(nargout=0)
-    while True:
-       new_datetime = datetime.datetime.now().second
        if new_datetime == cur_datetime + 5:
             break
 

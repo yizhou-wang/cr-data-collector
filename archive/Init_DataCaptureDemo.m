@@ -9,5 +9,5 @@ if (ErrStatus ~= 30000)
     return;
 end
 
-% Lua_String = 'ar1.CaptureCardConfig_StartRecord("C:\\ti\\mmwave_studio_02_00_00_02\\mmWaveStudio\\PostProc\\adc_data.bin", 1)';
-% ErrStatus = RtttNetClientAPI.RtttNetClient.SendCommand(Lua_String);
+Lua_String = 'ar1.CaptureCardConfig_StartRecord("C:\\ti\\mmwave_studio_02_00_00_02\\mmWaveStudio\\PostProc\\adc_data.bin", 1)';
+ErrStatus = RtttNetClientAPI.RtttNetClient.SendCommand(Lua_String);
