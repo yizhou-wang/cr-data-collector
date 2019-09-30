@@ -85,8 +85,8 @@ def rectify_for_date(date, data_dir='D:\\RawData'):
     #     print("Specific calibration for this date is unavailable, using default value.\n")
     #     calib_yaml = 'ost.yaml'
 
-    calib_yaml_l = os.path.join(data_dir, 'calib', '2019_09_26_18384019-19325055', 'left.yaml')
-    calib_yaml_r = os.path.join(data_dir, 'calib', '2019_09_26_18384019-19325055', 'right.yaml')
+    calib_yaml_l = os.path.join(data_dir, 'calib', date + '_18384019-19325055', 'left.yaml')
+    calib_yaml_r = os.path.join(data_dir, 'calib', date + '_18384019-19325055', 'right.yaml')
     seqs = sorted(os.listdir(base_dir))
     for seq in seqs:
         folder_dir_l = os.path.join(base_dir, seq, 'images_0')
