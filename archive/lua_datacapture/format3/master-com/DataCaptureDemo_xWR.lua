@@ -204,7 +204,7 @@ else
 end
 RSTD.Sleep(1000)
 
-if (ar1.FrameConfig(0, 1, 900, 255, 33.333333, 0, 1) == 0) then
+if (ar1.FrameConfig(0, 1, 1800, 255, 33.333333, 0, 1) == 0) then
     WriteToLog("FrameConfig Success\n", "green")
 else
     WriteToLog("FrameConfig failure\n", "red")
