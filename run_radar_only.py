@@ -172,12 +172,12 @@ if __name__ == '__main__':
             else:
                 shutil.rmtree(data_dir)
                 time.sleep(.00001)
-                os.makedirs(data_dir)
         else:
-            os.makedirs(data_dir)
+            pass
 
-    # for name in args.sequence_name:
-    #     data_dir = os.path.join(args.base_dir, name)
+    for name in args.sequence_name:
+        data_dir = os.path.join(args.base_dir, name)
+        os.makedirs(data_dir)
 
         # if not os.path.exists(os.path.join(data_dir, 'radar_v')):
         #     os.makedirs(os.path.join(data_dir, 'radar_v'))
