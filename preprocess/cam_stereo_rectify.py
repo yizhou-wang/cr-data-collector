@@ -82,6 +82,8 @@ def rectify_for_seq(folder_dir_l, folder_dir_r, calib_yaml_l, calib_yaml_r):
         rFrame = cv2.imread(im_dir_r)
         dstL = cv2.remap(lFrame, mapxL, mapyL,cv2.INTER_LINEAR)
         dstR = cv2.remap(rFrame, mapxR, mapyR,cv2.INTER_LINEAR)
+        dstL = dstL[:int(0.8*h_l), :, :]
+        dstR = dstR[:int(0.8*h_r), :, :]
 
         dstL = hist_equal(dstL)
         dstR = hist_equal(dstR)
@@ -112,6 +114,7 @@ def rectify_for_date(date, data_dir='D:\\RawData'):
     # calib_yaml_l = os.path.join(data_dir, 'calib', '2019_09_29_18384019-19325055', 'left.yaml')
     # calib_yaml_r = os.path.join(data_dir, 'calib', '2019_09_29_18384019-19325055', 'right.yaml')
     seqs = sorted(os.listdir(base_dir))
+    # seqs = ['2019_09_29_onrd038']
     for seq in seqs:
         folder_dir_l = os.path.join(base_dir, seq, 'images_raw_0')
         folder_dir_r = os.path.join(base_dir, seq, 'images_raw_1')
