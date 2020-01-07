@@ -2,7 +2,21 @@ import os
 import numpy as np
 
 from utils import get_sec
-from config import camera_configs
+
+# parameter settings
+camera_configs = {
+    'image_width': 1440,
+    'image_height': 1080,
+    'frame_rate': 30,
+    'image_folder': 'images_udst',
+    # 'image_folder': 'images_hist_0',
+    'time_stamp_name': 'timestamps.txt',
+    # 'time_stamp_name': 'timestamps_0.txt',
+    'frame_expo': 0,
+    # 'frame_expo': 40,
+    'start_time_name': 'start_time.txt',
+    # 'start_time_name': 'start_time.txt',
+}
 
 
 def fix_cam_drop_frames(seq_path, label_names):

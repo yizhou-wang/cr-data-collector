@@ -3,7 +3,7 @@ import shutil
 import time
 
 sys.path.append(os.path.abspath('..'))
-from .dataset_tools import fix_cam_drop_frames, calculate_frame_offset
+from utils.dataset_tools import fix_cam_drop_frames, calculate_frame_offset
 
 rename_dict = {
     'images': 'images_raw_0',
@@ -19,6 +19,7 @@ rename_dict = {
     'timestamps_0.txt': 'timestamps_0.txt',
     'timestamps_1.txt': 'timestamps_1.txt',
     'mask_obj_img': 'masks_obj_viz',
+    'depth_mono': 'depth_mono',
 }
 
 
@@ -174,10 +175,10 @@ def copy_masks(folder_name, startid_cam, nframes, overwrite=False):
             shutil.copyfile(src_npy, dst_npy)
 
 
-def update_mrcnndets(startid_cam, nframes):
+def update_mrcnndets(startid_cam, nframes, overwrite=False):
     update_mrcnn_txt('mrcnn_dets.txt', startid_cam, nframes)
-    copy_masks('masks_obj', startid_cam, nframes, overwrite=True)
-    copy_images('mask_obj_img', startid_cam, nframes)
+    copy_masks('masks_obj', startid_cam, nframes, overwrite=overwrite)
+    copy_images('mask_obj_img', startid_cam, nframes, overwrite=overwrite)
 
 
 data_root_old = '/mnt/nas_crdataset'
@@ -195,7 +196,7 @@ dates = ['2019_09_29']
 for date in dates:
     if date == "2019_04_22":
         continue
-    seqs = sorted(os.listdir(os.path.join(data_root_old, date)))[18:]
+    seqs = sorted(os.listdir(os.path.join(data_root_old, date)))
     for seq in seqs:
         print(seq)
         if 'onrd' in seq:
@@ -258,11 +259,12 @@ for date in dates:
         # copy_images('images', startid_cam, nframes)
         # copy_images('images_0', startid_cam, nframes)
         # copy_images('images_1', startid_cam, nframes)
-        # copy_images('masks_seg', startid_cam, nframes, ext='npy')
-        # copy_images('masks_seg_viz', startid_cam, nframes)
+        # copy_images('masks_seg', startid_cam, nframes, overwrite=True, ext='npy')
+        # copy_images('masks_seg_viz', startid_cam, nframes, overwrite=True)
+        # copy_images('depth_mono', startid_cam, nframes, ext='npy')
 
         if 'mrcnn_dets.txt' in folders and 'masks_obj' in folders and 'mask_obj_img' in folders:
-            update_mrcnndets(startid_cam, nframes)
+            update_mrcnndets(startid_cam, nframes, overwrite=True)
         else:
             print("Files are not complete for updating mrcnn results.")
 
