@@ -70,7 +70,7 @@ def rectify_for_seq(folder_dir_l, folder_dir_r, calib_yaml_l, calib_yaml_r):
     if not os.path.exists(folder_out_dir_r):
         os.makedirs(folder_out_dir_r)
 
-    #computes undistort and rectify maps
+    # computes undistort and rectify maps
     mapxL, mapyL = cv2.initUndistortRectifyMap(K_l, D_l, R_l, P_l, (w_l, h_l), cv2.CV_32FC1)
     mapxR, mapyR = cv2.initUndistortRectifyMap(K_r, D_r, R_r, P_r, (w_r, h_r), cv2.CV_32FC1)
 
@@ -85,10 +85,10 @@ def rectify_for_seq(folder_dir_l, folder_dir_r, calib_yaml_l, calib_yaml_r):
         dstL = dstL[:int(0.8*h_l), :, :]
         dstR = dstR[:int(0.8*h_r), :, :]
 
-        dstL = hist_equal(dstL)
-        dstR = hist_equal(dstR)
-        dstL = (dstL * 255).astype(np.uint8)
-        dstR = (dstR * 255).astype(np.uint8)
+        # dstL = hist_equal(dstL)
+        # dstR = hist_equal(dstR)
+        # dstL = (dstL * 255).astype(np.uint8)
+        # dstR = (dstR * 255).astype(np.uint8)
         dstL = color_transfer(dstR, dstL)
 
         im_out_name_l = os.path.join(folder_out_dir_l, im_name_l)
