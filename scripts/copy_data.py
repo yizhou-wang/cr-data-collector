@@ -4,11 +4,14 @@ import argparse
 import shutil
 import time
 
-rename_dict = {}
+rename_dict = {
+    'images_0': 'images_raw_0',
+    'images_1': 'images_raw_1',
+}
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Copy some folders in UWCR dataset')
+    parser = argparse.ArgumentParser(description='Copy some folders/files in UWCR dataset')
     parser.add_argument('--src_root', type=str, help='source data root directory')
     parser.add_argument('--dst_root', type=str, help='destination data root directory')
     parser.add_argument('--dates', type=str, help='process dates (separate by comma)')
@@ -97,7 +100,11 @@ if __name__ == '__main__':
                 names = os.listdir(src_dir)
             for name in names:
                 print("Copying %s to %s: %s ..." % (src_dir, dst_dir, name))
-                if os.path.isdir(os.path.join(src_dir, name)):
+                src_path = os.path.join(src_dir, name)
+                if not os.path.exists(src_path):
+                    print("Warning: %s does not exist" % src_path)
+                    continue
+                if os.path.isdir(src_path):
                     copy_folder(src_dir, dst_dir, name, rename, overwrite)
                 else:
                     copy_file(src_dir, dst_dir, name, rename, overwrite)
