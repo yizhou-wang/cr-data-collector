@@ -167,6 +167,11 @@ def rectify_for_date(date, data_dir='D:\\RawData', data_dir_new='D:\\RawData', o
 
 
 if __name__ == '__main__':
+    """
+    Example:
+        python cam_stereo_rectify.py --src_root /mnt/nas_crdataset/ --dst_root /mnt/nas_crdataset2/ \
+            --dates 2019_11_27 --overwrite --trim
+    """
 
     # main("D:/RawData/0000/images", 'ost.yaml')
     # load_calib('ost.yaml')

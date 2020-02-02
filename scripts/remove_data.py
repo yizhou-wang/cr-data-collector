@@ -15,6 +15,10 @@ def parse_args():
 
 
 if __name__ == '__main__':
+    """
+    Example:
+        python remove_data.py --src_root /mnt/nas_crdataset --dates 2019_11_27 --names WIN_HEATMAP,WIN_PROC_MAT_DATA
+    """
     args = parse_args()
     src_root = args.src_root
     dates = args.dates.split(',')

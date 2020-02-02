@@ -15,12 +15,17 @@ def parse_args():
     parser.add_argument('--src_root', type=str, help='source data root directory')
     parser.add_argument('--dates', type=str, help='process dates (separate by comma)')
     parser.add_argument('--names', type=str, default='', help='names of files/folders to copy (separate by comma)')
-    parser.add_argument('--renames', type=str, default='', help='new names of files/folders to copy (separate by comma)')
+    parser.add_argument('--names_new', type=str, default='', help='new names of files/folders to copy (separate by comma)')
     args = parser.parse_args()
     return args
 
 
 if __name__ == '__main__':
+    """
+    Example:
+        python rename_data.py --src_root /mnt/nas_crdataset --dates 2019_10_13 \
+            --names start_time.txt --names_new start_time_h.txt
+    """
     args = parse_args()
     src_root = args.src_root
     dates = args.dates.split(',')
@@ -28,14 +33,14 @@ if __name__ == '__main__':
         names = None
     else:
         names = args.names.split(',')
-    if args.renames == '':  # copy all files/folders
-        renames = None
+    if args.names_new == '':  # copy all files/folders
+        names_new = None
     else:
-        renames = args.renames.split(',')
-    if names is not None and renames is not None:
-        assert len(names) == len(renames)
+        names_new = args.names_new.split(',')
+    if names is not None and names_new is not None:
+        assert len(names) == len(names_new)
     print(names)
-    print(renames)
+    print(names_new)
 
     for date in dates:
         seqs = sorted(os.listdir(os.path.join(src_root, date)))
@@ -45,8 +50,8 @@ if __name__ == '__main__':
                 names = os.listdir(src_dir)
             for name_id, name in enumerate(names):
                 print("Renaming %s: %s ..." % (src_dir, name))
-                if renames is not None:
-                    name_new = renames[name_id]
+                if names_new is not None:
+                    name_new = names_new[name_id]
                 elif name in rename_dict:
                     name_new = rename_dict[name]
                 else:

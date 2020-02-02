@@ -17,6 +17,7 @@ def parse_args():
     parser.add_argument('--dates', type=str, help='process dates (separate by comma)')
     parser.add_argument('--names', type=str, default='', help='names of files/folders to copy (separate by comma)')
     parser.add_argument('--rename', action="store_true", help='whether do rename for the files/folders')
+    parser.add_argument('--names_new', type=str, default='', help='new names for the files/folders')
     parser.add_argument('--overwrite', action="store_true", help='whether rewrite if exist')
     args = parser.parse_args()
     return args
@@ -32,14 +33,10 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copyfile(s, d)
 
 
-def copy_file(src_dir, dst_dir, filename, rename=False, overwrite=False):
+def copy_file(src_dir, dst_dir, filename, filename_new, overwrite=False):
     try:
         src_path = os.path.join(src_dir, filename)
-        if rename and filename in rename_dict:
-            filerename = rename_dict[filename]
-        else:  # if filename not in rename_dict, do not rename
-            filerename = filename
-        dst_path = os.path.join(dst_dir, filerename)
+        dst_path = os.path.join(dst_dir, filename_new)
         if os.path.exists(dst_path):
             if overwrite:
                 os.remove(dst_path)
@@ -55,13 +52,10 @@ def copy_file(src_dir, dst_dir, filename, rename=False, overwrite=False):
         return False
 
 
-def copy_folder(src_dir, dst_dir, folder_name, rename=False, overwrite=False):
+def copy_folder(src_dir, dst_dir, folder_name, folder_name_new, overwrite=False):
     try:
         src_path = os.path.join(src_dir, folder_name)
-        if rename and folder_name in rename_dict:
-            dst_path = os.path.join(dst_dir, rename_dict[folder_name])
-        else:
-            dst_path = os.path.join(dst_dir, folder_name)
+        dst_path = os.path.join(dst_dir, folder_name_new)
         if os.path.exists(dst_path):
             if overwrite:
                 shutil.rmtree(dst_path)
@@ -78,6 +72,11 @@ def copy_folder(src_dir, dst_dir, folder_name, rename=False, overwrite=False):
 
 
 if __name__ == '__main__':
+    """
+    Example:
+        python copy_data.py --src_root /mnt/nas_crdataset/ --dst_root /mnt/nas_crdataset2/ --dates 2019_10_13 \
+            --names rad_reo_zerf,rad_reo_zerf_v --rename --names_new rad_reo_zerf_h,rad_reo_zerf_v --overwrite
+    """
     args = parse_args()
     src_root = args.src_root
     dst_root = args.dst_root
@@ -87,6 +86,14 @@ if __name__ == '__main__':
     else:
         names = args.names.split(',')
     rename = args.rename
+    if args.names_new == '':  # copy all files/folders
+        names_new = None
+    else:
+        names_new = args.names_new.split(',')
+    if names is not None and names_new is not None:
+        assert len(names) == len(names_new)
+    print(names)
+    print(names_new)
     overwrite = args.overwrite
 
     for date in dates:
@@ -98,13 +105,22 @@ if __name__ == '__main__':
                 os.makedirs(dst_dir)
             if names is None:
                 names = os.listdir(src_dir)
-            for name in names:
+            for name_id, name in enumerate(names):
                 print("Copying %s to %s: %s ..." % (src_dir, dst_dir, name))
                 src_path = os.path.join(src_dir, name)
                 if not os.path.exists(src_path):
                     print("Warning: %s does not exist" % src_path)
                     continue
-                if os.path.isdir(src_path):
-                    copy_folder(src_dir, dst_dir, name, rename, overwrite)
+                if rename:
+                    if names_new is not None:
+                        name_new = names_new[name_id]
+                    elif name in rename_dict:
+                        name_new = rename_dict[name]
+                    else:
+                        raise TypeError
                 else:
-                    copy_file(src_dir, dst_dir, name, rename, overwrite)
+                    name_new = name
+                if os.path.isdir(src_path):
+                    copy_folder(src_dir, dst_dir, name, name_new, overwrite)
+                else:
+                    copy_file(src_dir, dst_dir, name, name_new, overwrite)
