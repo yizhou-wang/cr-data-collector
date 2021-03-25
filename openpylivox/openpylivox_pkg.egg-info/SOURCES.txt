@@ -1,0 +1,9 @@
+README.md
+setup.py
+openpylivox/__init__.py
+openpylivox/openpylivox.py
+openpylivox_pkg.egg-info/PKG-INFO
+openpylivox_pkg.egg-info/SOURCES.txt
+openpylivox_pkg.egg-info/dependency_links.txt
+openpylivox_pkg.egg-info/requires.txt
+openpylivox_pkg.egg-info/top_level.txt

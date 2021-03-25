@@ -1,0 +1,11 @@
+Metadata-Version: 1.2
+Name: openpylivox-pkg
+Version: 1.0.0
+Summary: Python3 driver for Livox lidar sensors
+Home-page: https://github.com/ryan-brazeal-ufl/openpylivox
+Author: Ryan Brazeal
+Author-email: ryan.brazeal@ufl.edu
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires-Python: >=3.5
