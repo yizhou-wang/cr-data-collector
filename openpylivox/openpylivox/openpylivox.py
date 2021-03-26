@@ -32,6 +32,7 @@ import time
 import sys
 import os
 from pathlib import Path
+import datetime
 
 # additional modules
 import crcmod
@@ -240,7 +241,7 @@ class _dataCaptureThread(object):
                         timeSinceStart = timestamp_sec - self.startTime
                         if time.time() - last_time < self.duration:
 
-                        # if timeSinceStart <= self.duration:
+                            # if timeSinceStart <= self.duration:
 
                             # read data from receive buffer
                             if select.select([self.d_socket], [], [], 0)[0]:
@@ -342,7 +343,8 @@ class _dataCaptureThread(object):
 
                         # Cartesian
                         if self.dataType == 2:
-                            csvFile.write("Version,Slot ID,LiDAR Index,Rsvd,Error Code,Timestamp Type,     Data Type,Timestamp,X,Y,Z,Reflectivity,Tag,Ori_x,Ori_y,Ori_z,Ori_radius,Ori_theta,Ori_phi\n")
+                            csvFile.write(
+                                "Version,Slot ID,LiDAR Index,Rsvd,Error Code,Timestamp Type,     Data Type,Timestamp,X,Y,Z,Reflectivity,Tag,Ori_x,Ori_y,Ori_z,Ori_radius,Ori_theta,Ori_phi\n")
                             for i in range(0, lenData):
                                 coord1 = round(float(struct.unpack('<i', coord1s[i])[0]) / 1000.0, 3)
                                 coord2 = round(float(struct.unpack('<i', coord2s[i])[0]) / 1000.0, 3)
@@ -354,8 +356,6 @@ class _dataCaptureThread(object):
                                               + "," + "{0:.3f}".format(coord3) \
                                               + "," + str(int.from_bytes(intensities[i], byteorder='little')) \
                                               + ",0,0,0,0,0,0,0\n")
-
-
 
                     self.numPts = numPts
                     self.nullPts = nullPts
@@ -760,7 +760,6 @@ class _dataCaptureThread(object):
             pass
 
         while True:
-
             if self.started:
                 selectTest = select.select([self.d_socket], [], [], 0)
                 if selectTest[0]:
@@ -775,6 +774,7 @@ class _dataCaptureThread(object):
                         breakByCapture = True
                         break
             else:
+
                 break
 
         if breakByCapture:
@@ -823,6 +823,8 @@ class _dataCaptureThread(object):
                 binFile.write(struct.pack('<h', self.dataType))
 
                 flag = 0
+                last_status = self.pps_status
+
                 last_time = time.time()
 
                 # main loop that captures the desired point cloud data
@@ -847,21 +849,27 @@ class _dataCaptureThread(object):
                                 # update lidar status information
                                 self.updateStatus(data_pc[4:8])
 
-                                if (not self.lidar_only) and self.pps_status == 0 and flag == 0:
-                                    print('waiting for sync signal (IMU data only)')
-                                    last_time = time.time()
-                                    continue
+                                if not self.lidar_only:
+                                    if flag == 0:
+                                        if self.pps_status != last_status:
+                                            if last_status == 0:
+                                                print('\n')
+                                                timestamp = datetime.datetime.fromtimestamp(time.time()).strftime(
+                                                    '%Y-%m-%d %H:%M:%S.%f')
+                                                print('start collecting %s' % timestamp)
+                                                last_status = self.pps_status
+                                                flag = 1
+                                            elif last_status == 1:
+                                                print('\n')
+                                                print('cam stop')
+                                                last_status = self.pps_status
+                                                continue
 
-                                if flag == 0:
-                                    flag = 1
-                                    print('start collecting')
-
-                                if self.pps_status == 0 and self.lidar_only == False:
-                                    print('stop sync request')
-                                    self.started = False
-                                    self.isCapturing = False
-                                    break
-
+                                        else:
+                                            print('waiting for sync signal (IMU data only)', end='\r')
+                                            last_time = time.time()
+                                            last_status = self.pps_status
+                                            continue
 
                                 dataType = int.from_bytes(data_pc[9:10], byteorder='little')
                                 timestamp_type = int.from_bytes(data_pc[8:9], byteorder='little')
@@ -927,19 +935,17 @@ class _dataCaptureThread(object):
                                         # to account for first point's timestamp being increment in the loop
                                         timestamp_sec -= 0.000004167
                                         for i in range(0, 96):
-
                                             # Y coordinate (check for non-zero)
                                             # coord2 = struct.unpack('<i', data_pc[bytePos + 4:bytePos + 8])[0]
 
                                             # timestamp
                                             timestamp_sec += 0.000004167
 
-
                                             numPts += 1
                                             binFile.write(data_pc[bytePos:bytePos + 14])
                                             # binFile.write(struct.pack('<d', timestamp_sec))
-                                            binFile.write(struct.pack('<d', time.time()))
 
+                                            binFile.write(struct.pack('<d', time.time()))
 
                                             bytePos += 14
 
@@ -1006,7 +1012,6 @@ class _dataCaptureThread(object):
 
                                             bytePos += 16
 
-
                             # IMU data capture
                             if select.select([self.i_socket], [], [], 0)[0]:
                                 imu_data, addr2 = self.i_socket.recvfrom(50)
@@ -1045,6 +1050,8 @@ class _dataCaptureThread(object):
                         else:
                             self.started = False
                             self.isCapturing = False
+                            timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S.%f')
+                            print("lidar stop at %s" % timestamp)
                             break
                     # thread still running check (exit point)
                     else:
@@ -2214,7 +2221,9 @@ class openpylivox(object):
     def _dataStart_RT_B(self):
 
         if self._isConnected:
+
             if not self._isData:
+
                 self._captureStream = _dataCaptureThread(self._sensorIP, self._dataSocket, self._imuSocket, "", 2, 0, 0,
                                                          0, self._showMessages, self._format_spaces, self._deviceType)
                 time.sleep(0.12)
@@ -2888,7 +2897,9 @@ class openpylivox(object):
     def _saveDataToFile(self, filePathAndName, secsToWait, duration, lidar_only):
 
         if self._isConnected:
+
             if self._isData:
+
                 if self._firmware != "UNKNOWN":
                     try:
                         firmwareType = self._SPECIAL_FIRMWARE_TYPE_DICT[self._firmware]
@@ -2919,6 +2930,7 @@ class openpylivox(object):
                                         if self._showMessages: print(
                                             "   " + self._sensorIP + self._format_spaces + "   -->     * ISSUE: saving data, file path and name missing")
                                     else:
+                                        print('write')
 
                                         self._isWriting = True
                                         self._captureStream.filePathAndName = filePathAndName
